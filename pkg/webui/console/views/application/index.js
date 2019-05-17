@@ -31,25 +31,34 @@ import ApplicationCollaborators from '../application-collaborators'
 import ApplicationData from '../application-data'
 
 import {
-  getApplication,
+  selectApplicationById,
+  selectApplicationFetching,
+  selectApplicationError,
+} from '../../store/selectors/applications'
+import {
+  getApplicationById,
+} from '../../store/actions/applications'
+import {
   startApplicationEventsStream,
   stopApplicationEventsStream,
 } from '../../store/actions/application'
 
 import Devices from '../devices'
 
-@connect(function ({ application }, props) {
+@connect(function (state, props) {
+  const { appId } = props.match.params
+
   return {
-    appId: props.match.params.appId,
-    fetching: application.fetching,
-    application: application.application,
-    error: application.error,
+    appId,
+    fetching: selectApplicationFetching(state),
+    application: selectApplicationById(state, appId),
+    error: selectApplicationError(state),
   }
 },
 dispatch => ({
   startStream: id => dispatch(startApplicationEventsStream(id)),
   stopStream: id => dispatch(stopApplicationEventsStream(id)),
-  getApplication: id => dispatch(getApplication(id)),
+  getApplication: (id, meta) => dispatch(getApplicationById(id, meta)),
 }))
 @withSideNavigation(function (props) {
   const matchedUrl = props.match.url
@@ -123,7 +132,14 @@ export default class Application extends React.Component {
   componentDidMount () {
     const { appId, startStream, getApplication } = this.props
 
-    getApplication(appId)
+    getApplication(appId, {
+      selectors: [
+        'name',
+        'description',
+        'updated_at',
+        'updated_at',
+      ],
+    })
     startStream(appId)
   }
 

@@ -19,22 +19,11 @@ import * as applications from '../actions/applications'
 import * as application from '../actions/application'
 
 const getApplicationsLogic = createLogic({
-  type: [
-    applications.GET_APPS_LIST,
-    applications.SEARCH_APPS_LIST,
-  ],
-  latest: true,
-  async process ({ getState, action }, dispatch, done) {
-    const { page, pageSize: limit, query } = action.filters
+  type: applications.GET_APPS_LIST,
+  async process ({ action }, dispatch, done) {
+    const { page, pageSize: limit } = action.params
     try {
-      const data = query
-        ? await api.applications.search({
-          page,
-          limit,
-          id_contains: query,
-          name_contains: query,
-        })
-        : await api.applications.list({ page, limit })
+      const data = await api.applications.list({ page, limit })
       dispatch(applications.getApplicationsSuccess(data.applications, data.totalCount))
     } catch (error) {
       dispatch(applications.getApplicationsFailure(error))
@@ -44,10 +33,25 @@ const getApplicationsLogic = createLogic({
   },
 })
 
+const getApplicationLogic = createLogic({
+  type: applications.GET_APP,
+  async process ({ action }, dispatch, done) {
+    const { id, meta: { selectors = []}} = action
+
+    try {
+      const app = await api.application.get(id, selectors)
+      dispatch(applications.getApplicationSuccess(app))
+    } catch (e) {
+      dispatch(applications.getApplicationFailure(e))
+    }
+
+    done()
+  },
+})
+
 const getApplicationsRightsLogic = createLogic({
   type: [
     applications.GET_APPS_RIGHTS_LIST,
-    application.GET_APP_API_KEY_PAGE_DATA,
     application.GET_APP_COLLABORATOR_PAGE_DATA,
   ],
   async process ({ getState, action }, dispatch, done) {
@@ -66,5 +70,6 @@ const getApplicationsRightsLogic = createLogic({
 
 export default [
   getApplicationsLogic,
+  getApplicationLogic,
   getApplicationsRightsLogic,
 ]

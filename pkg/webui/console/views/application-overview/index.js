@@ -22,31 +22,38 @@ import DevicesTable from '../../containers/devices-table'
 import DataSheet from '../../../components/data-sheet'
 import ApplicationEvents from '../../containers/application-events'
 
+import { getApplicationId } from '../../../lib/selectors/id'
+import { selectApplicationById } from '../../store/selectors/applications'
+
 import style from './application-overview.styl'
 
 const DEVICES_TABLE_SIZE = 5
 
-@connect(function ({ application }, props) {
+@connect(function (state, props) {
+  const { appId } = props.match.params
+
   return {
-    application: application.application,
+    appId,
+    application: selectApplicationById(state, appId),
   }
 })
 class ApplicationOverview extends React.Component {
 
   get applicationInfo () {
+    const { application } = this.props
     const {
-      ids,
       name,
       description,
       created_at,
       updated_at,
-    } = this.props.application
+    } = application
+    const id = getApplicationId(application)
 
     const sheetData = [
       {
         header: sharedMessages.generalInformation,
         items: [
-          { key: sharedMessages.appId, value: ids.application_id, type: 'code', sensitive: false },
+          { key: sharedMessages.appId, value: id, type: 'code', sensitive: false },
           { key: sharedMessages.createdAt, value: <DateTime value={created_at} /> },
           { key: sharedMessages.updatedAt, value: <DateTime value={updated_at} /> },
         ],
@@ -56,7 +63,7 @@ class ApplicationOverview extends React.Component {
     return (
       <div>
         <div className={style.title}>
-          <h2>{name || ids.application_id}</h2>
+          <h2>{name || id}</h2>
           { description && <span className={style.description}>{description}</span> }
         </div>
         <DataSheet data={sheetData} />
@@ -65,7 +72,7 @@ class ApplicationOverview extends React.Component {
   }
 
   render () {
-    const { appId } = this.props.match.params
+    const { appId } = this.props
 
     return (
       <Container>

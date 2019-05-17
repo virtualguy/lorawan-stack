@@ -19,36 +19,53 @@ import {
   createGetRightsListFailureActionType,
   getRightsListSuccess,
   createGetRightsListSuccessActionType,
-} from '../actions/rights'
+} from './rights'
 
+import {
+  getPagination,
+  createGetPaginationActionType,
+  getPaginationSuccess,
+  createGetPaginationSuccessActionType,
+  getPaginationFailure,
+  createGetPaginationFailureActionType,
+  createGetBaseActionType,
+} from './pagination'
+
+// utils
 export const SHARED_NAME = 'APPLICATIONS'
+export const SHARED_NAME_SINGLE = 'APPLICATION'
+export const GET_APPS_LIST_BASE = createGetBaseActionType(SHARED_NAME)
+export const GET_APP_BASE = 'GET_APPLICATION'
 
-export const GET_APPS_LIST = 'GET_APPLICATIONS_LIST'
-export const SEARCH_APPS_LIST = 'SEARCH_APPLICATIONS_LIST'
-export const GET_APPS_LIST_SUCCESS = 'GET_APPLICATIONS_LIST_SUCCESS'
-export const GET_APPS_LIST_FAILURE = 'GET_APPLICATIONS_LIST_FAILURE'
+// application
+export const GET_APP = `${GET_APP_BASE}_REQUEST`
+export const GET_APP_SUCCESS = `${GET_APP_BASE}_SUCCESS`
+export const GET_APP_FAILURE = `${GET_APP_BASE}_FAILURE`
+
+export const getApplicationById = (id, meta) => (
+  { type: GET_APP, id, meta }
+)
+export const getApplicationSuccess = application => (
+  { type: GET_APP_SUCCESS, application }
+)
+export const getApplicationFailure = error => (
+  { type: GET_APP_FAILURE, error }
+)
+
+// applications
+export const GET_APPS_LIST = createGetPaginationActionType(SHARED_NAME)
+export const GET_APPS_LIST_SUCCESS = createGetPaginationSuccessActionType(SHARED_NAME)
+export const GET_APPS_LIST_FAILURE = createGetPaginationFailureActionType(SHARED_NAME)
+
+export const getApplications = getPagination(SHARED_NAME)
+export const getApplicationsSuccess = getPaginationSuccess(SHARED_NAME)
+export const getApplicationsFailure = getPaginationFailure(SHARED_NAME)
+
+// rights
 export const GET_APPS_RIGHTS_LIST = createGetRightsListActionType(SHARED_NAME)
 export const GET_APPS_RIGHTS_LIST_SUCCESS = createGetRightsListSuccessActionType(SHARED_NAME)
 export const GET_APPS_RIGHTS_LIST_FAILURE = createGetRightsListFailureActionType(SHARED_NAME)
 
-export const getApplicationsList = filters => (
-  { type: GET_APPS_LIST, filters }
-)
-
-export const searchApplicationsList = filters => (
-  { type: SEARCH_APPS_LIST, filters }
-)
-
-export const getApplicationsSuccess = (applications, totalCount) => (
-  { type: GET_APPS_LIST_SUCCESS, applications, totalCount }
-)
-
-export const getApplicationsFailure = error => (
-  { type: GET_APPS_LIST_FAILURE, error }
-)
-
 export const getApplicationsRightsList = getRightsList(SHARED_NAME)
-
 export const getApplicationsRightsListSuccess = getRightsListSuccess(SHARED_NAME)
-
 export const getApplicationsRightsListFailure = getRightsListFailure(SHARED_NAME)

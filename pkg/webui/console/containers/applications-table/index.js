@@ -13,16 +13,23 @@
 // limitations under the License.
 
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import { defineMessages } from 'react-intl'
 import bind from 'autobind-decorator'
 
 import sharedMessages from '../../../lib/shared-messages'
+import PropTypes from '../../../lib/prop-types'
 import FetchTable from '../fetch-table'
 
 import {
-  getApplicationsList,
-  searchApplicationsList,
-} from '../../../console/store/actions/applications'
+  getApplications,
+} from '../../store/actions/applications'
+import {
+  selectApplications,
+  selectApplicationsTotalCount,
+  selectApplicationsFetching,
+  selectApplicationsError,
+} from '../../store/selectors/applications'
 
 const m = defineMessages({
   all: 'All',
@@ -51,26 +58,45 @@ const headers = [
 ]
 
 @bind
-export default class ApplicationsTable extends Component {
+class ApplicationsTable extends Component {
 
-  baseDataSelector ({ applications }) {
-    return applications
+  baseDataSelector (state) {
+    return {
+      applications: selectApplications(state),
+      totalCount: selectApplicationsTotalCount(state),
+      fetching: selectApplicationsFetching(state),
+    }
   }
 
   render () {
+    const { error, ...rest } = this.props
+
+    if (error) {
+      throw error
+    }
+
     return (
       <FetchTable
         entity="applications"
         headers={headers}
         addMessage={sharedMessages.addApplication}
-        tableTitle={this.tableTitle}
-        getItemsAction={getApplicationsList}
-        searchItemsAction={searchApplicationsList}
+        getItemsAction={getApplications}
         tabs={tabs}
         baseDataSelector={this.baseDataSelector}
-        {...this.props}
+        {...rest}
       />
     )
   }
 }
 
+ApplicationsTable.propTypes = {
+  error: PropTypes.error,
+}
+
+ApplicationsTable.defaultProps = {
+  error: null,
+}
+
+export default connect(state => ({
+  error: selectApplicationsError(state),
+}))(ApplicationsTable)
