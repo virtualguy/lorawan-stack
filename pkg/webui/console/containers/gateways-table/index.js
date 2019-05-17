@@ -13,16 +13,23 @@
 // limitations under the License.
 
 import React from 'react'
+import { connect } from 'react-redux'
 import { defineMessages } from 'react-intl'
 import bind from 'autobind-decorator'
 
+import PropTypes from '../../../lib/prop-types'
 import sharedMessages from '../../../lib/shared-messages'
 import FetchTable from '../fetch-table'
 
 import {
-  getGatewaysList,
-  searchGatewaysList,
-} from '../../../console/store/actions/gateways'
+  getGateways,
+} from '../../store/actions/gateways'
+import {
+  selectGateways,
+  selectGatewaysTotalCount,
+  selectGatewaysFetching,
+  selectGatewaysError,
+} from '../../store/selectors/gateways'
 
 const m = defineMessages({
   add: 'Add Gateway',
@@ -61,23 +68,44 @@ const headers = [
 ]
 
 @bind
-export default class GatewaysTable extends React.Component {
+class GatewaysTable extends React.Component {
 
-  baseDataSelector ({ gateways }) {
-    return gateways
+  baseDataSelector (state) {
+    return {
+      gateways: selectGateways(state),
+      totalCount: selectGatewaysTotalCount(state),
+      fetching: selectGatewaysFetching(state),
+    }
   }
 
   render () {
+    const { error, ...rest } = this.props
+
+    if (error) {
+      throw error
+    }
+
     return (
       <FetchTable
         entity="gateways"
         addMessage={m.add}
         headers={headers}
-        getItemsAction={getGatewaysList}
-        searchItemsAction={searchGatewaysList}
+        getItemsAction={getGateways}
         baseDataSelector={this.baseDataSelector}
-        {...this.props}
+        {...rest}
       />
     )
   }
 }
+
+GatewaysTable.propTypes = {
+  error: PropTypes.error,
+}
+
+GatewaysTable.defaultProps = {
+  error: null,
+}
+
+export default connect(state => ({
+  error: selectGatewaysError(state),
+}))(GatewaysTable)

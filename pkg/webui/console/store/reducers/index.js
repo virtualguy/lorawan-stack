@@ -34,6 +34,7 @@ import createNamedCollaboratorsReducer from './collaborators'
 import createNamedEventsReducer from './events'
 import fetching from './ui/fetching'
 import error from './ui/error'
+import createNamedPaginationReducer from './pagination'
 
 export default combineReducers({
   user,
@@ -65,5 +66,9 @@ export default combineReducers({
   ui: combineReducers({
     fetching,
     error,
+  }),
+  pagination: combineReducers({
+    applications: createNamedPaginationReducer(APPLICATIONS_SHARED_NAME),
+    gateways: createNamedPaginationReducer(GATEWAYS_SHARED_NAME),
   }),
 })

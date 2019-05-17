@@ -19,37 +19,53 @@ import {
   createGetRightsListFailureActionType,
   getRightsListSuccess,
   createGetRightsListSuccessActionType,
-} from '../actions/rights'
+} from './rights'
 
+import {
+  getPagination,
+  createGetPaginationActionType,
+  getPaginationSuccess,
+  createGetPaginationSuccessActionType,
+  getPaginationFailure,
+  createGetPaginationFailureActionType,
+  createGetBaseActionType,
+} from './pagination'
+
+// utils
 export const SHARED_NAME = 'GATEWAYS'
+export const SHARED_NAME_SINGLE = 'GATEWAY'
+export const GET_GTWS_LIST_BASE = createGetBaseActionType(SHARED_NAME)
+export const GET_GTW_BASE = 'GET_GATEWAY'
 
-export const GET_GTWS_LIST = 'GET_GATEWAYS_LIST'
-export const SEARCH_GTWS_LIST = 'SEARCH_GATEWAYS_LIST'
-export const GET_GTWS_LIST_SUCCESS = 'GET_GATEWAYS_LIST_SUCCESS'
-export const GET_GTWS_LIST_FAILURE = 'GET_GATEWAYS_LIST_FAILURE'
+// gateway
+export const GET_GTW = `${GET_GTW_BASE}_REQUEST`
+export const GET_GTW_SUCCESS = `${GET_GTW_BASE}_SUCCESS`
+export const GET_GTW_FAILURE = `${GET_GTW_BASE}_FAILURE`
+
+export const getGatewayById = (id, meta) => (
+  { type: GET_GTW, id, meta }
+)
+export const getGatewaySuccess = gateway => (
+  { type: GET_GTW_SUCCESS, gateway }
+)
+export const getGatewayFailure = error => (
+  { type: GET_GTW_FAILURE, error }
+)
+
+// gateways
+export const GET_GTWS_LIST = createGetPaginationActionType(SHARED_NAME)
+export const GET_GTWS_LIST_SUCCESS = createGetPaginationSuccessActionType(SHARED_NAME)
+export const GET_GTWS_LIST_FAILURE = createGetPaginationFailureActionType(SHARED_NAME)
+
+export const getGateways = getPagination(SHARED_NAME)
+export const getGatewaysSuccess = getPaginationSuccess(SHARED_NAME)
+export const getGatewaysFailure = getPaginationFailure(SHARED_NAME)
+
+// rights
 export const GET_GTWS_RIGHTS_LIST = createGetRightsListActionType(SHARED_NAME)
 export const GET_GTWS_RIGHTS_LIST_SUCCESS = createGetRightsListSuccessActionType(SHARED_NAME)
 export const GET_GTWS_RIGHTS_LIST_FAILURE = createGetRightsListFailureActionType(SHARED_NAME)
 
-
-export const getGatewaysList = filters => (
-  { type: GET_GTWS_LIST, filters }
-)
-
-export const searchGatewaysList = filters => (
-  { type: SEARCH_GTWS_LIST, filters }
-)
-
-export const getGatewaysSuccess = (gateways, totalCount) => (
-  { type: GET_GTWS_LIST_SUCCESS, gateways, totalCount }
-)
-
-export const getGatewaysFailure = error => (
-  { type: GET_GTWS_LIST_FAILURE, error }
-)
-
 export const getGatewaysRightsList = getRightsList(SHARED_NAME)
-
 export const getGatewaysRightsListSuccess = getRightsListSuccess(SHARED_NAME)
-
 export const getGatewaysRightsListFailure = getRightsListFailure(SHARED_NAME)

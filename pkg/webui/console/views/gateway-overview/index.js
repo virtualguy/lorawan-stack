@@ -26,21 +26,16 @@ import GatewayEvents from '../../containers/gateway-events'
 import Tag from '../../../components/tag'
 import Message from '../../../lib/components/message'
 
-import {
-  gatewaySelector,
-} from '../../store/selectors/gateway'
-import {
-  getGatewayId as idSelector,
-} from '../../../lib/selectors/id'
+import { selectGatewayById } from '../../store/selectors/gateways'
 
 import style from './gateway-overview.styl'
 
 @connect(function (state, props) {
-  const gtw = gatewaySelector(state, props)
+  const { gtwId } = props.match.params
 
   return {
-    gtwId: idSelector(gtw),
-    gateway: gtw,
+    gtwId,
+    gateway: selectGatewayById(state, gtwId),
   }
 })
 @bind
@@ -49,7 +44,6 @@ export default class GatewayOverview extends React.Component {
   get gatewayInfo () {
     const { gtwId, gateway } = this.props
     const {
-      ids,
       name,
       description,
       created_at,
@@ -70,7 +64,7 @@ export default class GatewayOverview extends React.Component {
           },
           {
             key: sharedMessages.gatewayEUI,
-            value: ids.eui,
+            value: gtwId,
             type: 'code',
             sensitive: false,
           },

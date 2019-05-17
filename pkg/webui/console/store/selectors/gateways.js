@@ -12,16 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { GET_GTWS_LIST_BASE, SEARCH_GTWS_LIST_BASE } from '../actions/gateways'
+import {
+  GET_GTWS_LIST_BASE,
+  GET_GTW_BASE,
+} from '../actions/gateways'
+import {
+  createPaginationIdsSelectorByEntity,
+  createPaginationTotalCountSelectorByEntity,
+} from './pagination'
 import { createFetchingSelector } from './fetching'
 import { createErrorSelector } from './error'
 
-const selectGtwsStore = state => state.gateways
-const selectGtwsFetching = createFetchingSelector([ GET_GTWS_LIST_BASE, SEARCH_GTWS_LIST_BASE ])
-const selectGtwsError = createErrorSelector([ GET_GTWS_LIST_BASE, SEARCH_GTWS_LIST_BASE ])
+const ENTITY = 'gateways'
+
+// gatway
+export const selectGatewayStore = state => state.gateways
+export const selectGatewayById = (state, id) => selectGatewayStore(state)[id]
+export const selectGatewayFetching = createFetchingSelector(GET_GTW_BASE)
+export const selectGatewayError = createErrorSelector(GET_GTW_BASE)
 
 // gateways
-export const selectGateways = state => selectGtwsStore(state).gateways
-export const selectGatewaysTotalCount = state => selectGtwsStore(state).totalCount
+const selectGtwsIds = createPaginationIdsSelectorByEntity(ENTITY)
+const selectGtwsTotalCount = createPaginationTotalCountSelectorByEntity(ENTITY)
+const selectGtwsFetching = createFetchingSelector(GET_GTWS_LIST_BASE)
+const selectGtwsError = createErrorSelector(GET_GTWS_LIST_BASE)
+
+export const selectGateways = state => selectGtwsIds(state).map(id => selectGatewayById(state, id))
+export const selectGatewaysTotalCount = state => selectGtwsTotalCount(state)
 export const selectGatewaysFetching = state => selectGtwsFetching(state)
 export const selectGatewaysError = state => selectGtwsError(state)

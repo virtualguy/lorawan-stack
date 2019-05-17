@@ -19,26 +19,31 @@ import * as gateways from '../actions/gateways'
 import * as gateway from '../actions/gateway'
 
 const getGatewaysLogic = createLogic({
-  type: [
-    gateways.GET_GTWS_LIST,
-    gateways.SEARCH_GTWS_LIST,
-  ],
-  latest: true,
-  async process ({ getState, action }, dispatch, done) {
-    const { page, pageSize: limit, query } = action.filters
+  type: gateways.GET_GTWS_LIST,
+  async process ({ action }, dispatch, done) {
+    const { page, pageSize: limit } = action.params
 
     try {
-      const data = query
-        ? await api.gateways.search({
-          page,
-          limit,
-          id_contains: query,
-          name_contains: query,
-        })
-        : await api.gateways.list({ page, limit }, [ 'name,description,frequency_plan_id' ])
+      const data = await api.gateways.list({ page, limit }, [ 'name', 'description', 'frequency_plan_id' ])
       dispatch(gateways.getGatewaysSuccess(data.gateways, data.totalCount))
     } catch (error) {
       dispatch(gateways.getGatewaysFailure(error))
+    }
+
+    done()
+  },
+})
+
+const getGatewayLogic = createLogic({
+  type: gateways.GET_GTW,
+  async process ({ action }, dispatch, done) {
+    const { id, meta: { selectors = []}} = action
+
+    try {
+      const gateway = await api.gateway.get(id, selectors)
+      dispatch(gateways.getGatewaySuccess(gateway))
+    } catch (error) {
+      dispatch(gateways.getGatewayFailure(error))
     }
 
     done()
@@ -66,5 +71,6 @@ const getGatewaysRightsLogic = createLogic({
 
 export default [
   getGatewaysLogic,
+  getGatewayLogic,
   getGatewaysRightsLogic,
 ]

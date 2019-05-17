@@ -12,48 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { getGatewayId } from '../../../lib/selectors/id'
 import {
-  GET_GTWS_LIST,
-  SEARCH_GTWS_LIST,
+  GET_GTW_SUCCESS,
   GET_GTWS_LIST_SUCCESS,
-  GET_GTWS_LIST_FAILURE,
 } from '../actions/gateways'
 
-const defaultState = {
-  fetching: false,
-  fetchingSearch: false,
-  error: undefined,
-  gateways: [],
-  totalCount: 0,
+const gateway = function (state = {}, gateway) {
+  return {
+    ...state,
+    ...gateway,
+  }
 }
 
-const gateways = function (state = defaultState, action) {
+const gateways = function (state = {}, action) {
   switch (action.type) {
-  case GET_GTWS_LIST:
-    return {
-      ...state,
-      fetching: true,
-    }
-  case SEARCH_GTWS_LIST:
-    return {
-      ...state,
-      fetching: true,
-      fetchingSearch: true,
-    }
   case GET_GTWS_LIST_SUCCESS:
+    return action.entities.reduce(function (acc, app) {
+      const id = getGatewayId(app)
+
+      acc[id] = gateway(acc[id], app)
+      return acc
+    }, { ...state })
+  case GET_GTW_SUCCESS:
+    const id = getGatewayId(action.gateway)
+
     return {
       ...state,
-      totalCount: action.totalCount,
-      gateways: action.gateways,
-      fetching: false,
-      fetchingSearch: false,
-    }
-  case GET_GTWS_LIST_FAILURE:
-    return {
-      ...state,
-      fetching: false,
-      fetchingSearch: false,
-      error: action.error,
+      [id]: gateway(state[id], action.gateway),
     }
   default:
     return state
