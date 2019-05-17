@@ -13,7 +13,7 @@
 // limitations under the License.
 
 export const createGetRightsListActionType = name => (
-  `GET_${name}_RIGHTS_LIST`
+  `GET_${name}_RIGHTS_LIST_REQUEST`
 )
 
 export const createGetRightsListSuccessActionType = name => (
