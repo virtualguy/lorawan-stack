@@ -23,7 +23,17 @@ import PropTypes from '../../../lib/prop-types'
 import FetchTable from '../fetch-table'
 import DateTime from '../../../lib/components/date-time'
 
-import { getDevicesList, searchDevicesList } from '../../../console/store/actions/devices'
+import { getApplicationId } from '../../../lib/selectors/id'
+import {
+  getDevices,
+  searchDevices,
+} from '../../store/actions/devices'
+import {
+  selectDevices,
+  selectDevicesTotalCount,
+  selectDevicesFetching,
+  selectDevicesError,
+} from '../../store/selectors/devices'
 
 const m = defineMessages({
   deviceId: 'Device ID',
@@ -49,27 +59,30 @@ const headers = [
   },
 ]
 
-@connect(function ({ application, devices }, props) {
-  return {
-    appId: application.application.ids.application_id,
-    totalCount: devices.totalCount,
-  }
-})
 @bind
 class DevicesTable extends React.Component {
   constructor (props) {
     super(props)
 
-    this.searchDevicesList = filters => searchDevicesList(props.appId, filters)
-    this.getDevicesList = filters => getDevicesList(props.appId, filters)
+    this.searchDevicesList = filters => searchDevices(props.appId, filters)
+    this.getDevicesList = filters => getDevices(props.appId, filters)
   }
 
-  baseDataSelector ({ devices }) {
-    return devices
+  baseDataSelector (state) {
+    return {
+      devices: selectDevices(state),
+      totalCount: selectDevicesTotalCount(state),
+      fetching: selectDevicesFetching(state),
+    }
   }
 
   render () {
-    const { totalCount, devicePathPrefix } = this.props
+    const { error, totalCount, devicePathPrefix } = this.props
+
+    if (error) {
+      throw error
+    }
+
     return (
       <FetchTable
         entity="devices"
@@ -87,12 +100,20 @@ class DevicesTable extends React.Component {
 }
 
 DevicesTable.propTypes = {
-  devicePathPrefix: PropTypes.string,
+  devicePathPrefix: PropTypes.string.isRequired,
   totalCount: PropTypes.number,
+  error: PropTypes.error,
 }
 
 DevicesTable.defaultProps = {
   totalCount: 0,
+  error: null,
 }
 
-export default DevicesTable
+export default connect(function (state) {
+  return {
+    error: selectDevicesError(state),
+    appId: getApplicationId(state.application.application),
+    totalCount: selectDevicesTotalCount(state),
+  }
+})(DevicesTable)

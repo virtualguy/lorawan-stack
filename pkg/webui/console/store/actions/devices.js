@@ -12,23 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export const GET_DEVICES_LIST = 'GET_DEVICES_LIST'
-export const SEARCH_DEVICES_LIST = 'SEARCH_DEVICES_LIST'
-export const GET_DEVICES_LIST_SUCCESS = 'GET_DEVICES_LIST_SUCCESS'
-export const GET_DEVICES_LIST_FAILURE = 'GET_DEVICES_LIST_FAILURE'
+// utils
+export const GET_DEVICES_LIST_BASE = 'GET_DEVICES_LIST'
+export const SEARCH_DEVICES_LIST_BASE = 'SEARCH_DEVICES_LIST'
 
-export const getDevicesList = (appId, filters) => (
+// devices
+export const GET_DEVICES_LIST = `${GET_DEVICES_LIST_BASE}_REQUEST`
+export const SEARCH_DEVICES_LIST = `${SEARCH_DEVICES_LIST_BASE}_REQUEST`
+export const GET_DEVICES_LIST_SUCCESS = `${GET_DEVICES_LIST_BASE}_SUCCESS`
+export const GET_DEVICES_LIST_FAILURE = `${GET_DEVICES_LIST_BASE}_FAILURE`
+
+export const getDevices = (appId, filters) => (
   { type: GET_DEVICES_LIST, appId, filters }
 )
-
-export const searchDevicesList = (appId, filters) => (
+export const searchDevices = (appId, filters) => (
   { type: SEARCH_DEVICES_LIST, appId, filters }
 )
-
 export const getDevicesListSuccess = (devices, totalCount) => (
   { type: GET_DEVICES_LIST_SUCCESS, devices, totalCount }
 )
-
 export const getDevicesListFailure = error => (
   { type: GET_DEVICES_LIST_FAILURE, error }
 )
