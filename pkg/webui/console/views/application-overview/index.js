@@ -23,14 +23,17 @@ import DataSheet from '../../../components/data-sheet'
 import ApplicationEvents from '../../containers/application-events'
 
 import { getApplicationId } from '../../../lib/selectors/id'
-import { selectApplicationById } from '../../store/selectors/applications'
+import {
+  selectSelectedApplicationId,
+  selectApplicationById,
+} from '../../store/selectors/applications'
 
 import style from './application-overview.styl'
 
 const DEVICES_TABLE_SIZE = 5
 
-@connect(function (state, props) {
-  const { appId } = props.match.params
+@connect(function (state) {
+  const appId = selectSelectedApplicationId(state)
 
   return {
     appId,

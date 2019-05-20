@@ -21,6 +21,7 @@ import {
 import {
   createGetApiKeysBaseActionType,
 } from '../actions/api-keys'
+import { selectSelectedApplicationId } from './applications'
 import {
   createPaginationIdsSelectorByEntityAndId,
   createPaginationTotalCountSelectorByEntityAndId,
@@ -32,6 +33,16 @@ const selectStore = state => state.apiKeys
 
 // api key
 export const selectApiKeyById = (state, keyId) => selectStore(state)[keyId]
+
+// application api key
+export const selectSelectedApplicationApiKey = function (state, keyId) {
+  const key = selectApiKeyById(state, keyId) || {}
+  const selectedAppId = selectSelectedApplicationId(state)
+
+  if (key.entityId === selectedAppId) {
+    return key
+  }
+}
 
 // application api keys
 const APP_ENTITY = 'apiKeysByApplication'

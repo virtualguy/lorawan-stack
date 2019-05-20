@@ -31,7 +31,9 @@ const ENTITY = 'applications'
 
 // application
 export const selectApplicationStore = state => state.applications
-export const selectApplicationById = (state, id) => selectApplicationStore(state)[id]
+export const selectApplicationEntitiesStore = state => selectApplicationStore(state).entities
+export const selectApplicationById = (state, id) => selectApplicationEntitiesStore(state)[id]
+export const selectSelectedApplicationId = state => selectApplicationStore(state).selectedApplication
 export const selectApplicationFetching = createFetchingSelector(GET_APP_BASE)
 export const selectApplicationError = createErrorSelector(GET_APP_BASE)
 
@@ -48,5 +50,6 @@ export const selectApplicationsError = state => selectAppsError(state)
 
 // rights
 export const selectApplicationRightsById = createRightsSelectorById(ENTITY)
+export const selectSelectedApplicationRights = state => selectApplicationRightsById(state, selectSelectedApplicationId(state))
 export const selectApplicationRightsFetching = createFetchingSelector(GET_APP_RIGHTS_LIST_BASE)
 export const selectApplicationRightsError = createErrorSelector(GET_APP_RIGHTS_LIST_BASE)

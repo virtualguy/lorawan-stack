@@ -33,10 +33,11 @@ import {
   GET_APP_RIGHTS_LIST_BASE,
 } from '../../store/actions/applications'
 import {
-  selectApplicationRightsById,
+  selectSelectedApplicationRights,
+  selectSelectedApplicationId,
 } from '../../store/selectors/applications'
 import {
-  selectApiKeyById,
+  selectSelectedApplicationApiKey,
 } from '../../store/selectors/api-keys'
 import {
   createFetchingSelector,
@@ -57,13 +58,14 @@ const selectPageError = createErrorSelector([
 ])
 
 @connect(function (state, props) {
-  const { appId, apiKeyId } = props.match.params
+  const { apiKeyId } = props.match.params
+  const appId = selectSelectedApplicationId(state)
 
   return {
     apiKeyId,
     appId,
-    apiKey: selectApiKeyById(state, apiKeyId),
-    rights: selectApplicationRightsById(state, appId),
+    apiKey: selectSelectedApplicationApiKey(state, apiKeyId),
+    rights: selectSelectedApplicationRights(state),
     fetching: selectPageFetching(state),
     error: selectPageError(state),
   }

@@ -28,20 +28,21 @@ import { ApiKeyCreateForm } from '../../../components/api-key-form'
 
 import { getApplicationRights } from '../../store/actions/applications'
 import {
-  selectApplicationRightsById,
+  selectSelectedApplicationId,
+  selectSelectedApplicationRights,
   selectApplicationRightsFetching,
   selectApplicationRightsError,
 } from '../../store/selectors/applications'
 import api from '../../api'
 
-@connect(function (state, props) {
-  const appId = props.match.params.appId
+@connect(function (state) {
+  const appId = selectSelectedApplicationId(state)
 
   return {
     appId,
     fetching: selectApplicationRightsFetching(state),
     error: selectApplicationRightsError(state),
-    rights: selectApplicationRightsById(state, appId),
+    rights: selectSelectedApplicationRights(state),
   }
 },
 dispatch => ({

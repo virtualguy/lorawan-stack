@@ -14,6 +14,7 @@
 
 import { getApplicationId } from '../../../lib/selectors/id'
 import {
+  GET_APP,
   GET_APP_SUCCESS,
   GET_APPS_LIST_SUCCESS,
 } from '../actions/applications'
@@ -25,21 +26,39 @@ const application = function (state = {}, application) {
   }
 }
 
-const applications = function (state = {}, action) {
+const defaultState = {
+  entities: {},
+  selectedApplication: null,
+}
+
+const applications = function (state = defaultState, action) {
   switch (action.type) {
+  case GET_APP:
+    return {
+      ...state,
+      selectedApplication: action.id,
+    }
   case GET_APPS_LIST_SUCCESS:
-    return action.entities.reduce(function (acc, app) {
+    const entities = action.entities.reduce(function (acc, app) {
       const id = getApplicationId(app)
 
       acc[id] = application(acc[id], app)
       return acc
-    }, { ...state })
+    }, { ...state.entities })
+
+    return {
+      ...state,
+      entities,
+    }
   case GET_APP_SUCCESS:
     const id = getApplicationId(action.application)
 
     return {
       ...state,
-      [id]: application(state[id], action.application),
+      entities: {
+        ...state.entities,
+        [id]: application(state[id], action.application),
+      },
     }
   default:
     return state

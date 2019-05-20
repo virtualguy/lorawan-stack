@@ -35,6 +35,10 @@ import DateTime from '../../../lib/components/date-time'
 import Icon from '../../../components/icon'
 import SubmitBar from '../../../components/submit-bar'
 
+import {
+  selectSelectedApplicationId,
+} from '../../store/selectors/applications'
+
 import api from '../../api'
 
 import style from './application-link.styl'
@@ -64,7 +68,7 @@ const validationSchema = Yup.object().shape({
 })
 
 @connect(function (state, props) {
-  const { appId } = props.match.params
+  const appId = selectSelectedApplicationId(state)
 
   return { appId }
 })

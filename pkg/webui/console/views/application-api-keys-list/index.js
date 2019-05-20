@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from 'react'
+import { connect } from 'react-redux'
 import { Container, Row, Col } from 'react-grid-system'
 import bind from 'autobind-decorator'
 
@@ -25,21 +26,25 @@ import {
   selectApplicationTotalCountById,
   selectApplicationApiKeysFetching,
 } from '../../store/selectors/api-keys'
+import {
+  selectSelectedApplicationId,
+} from '../../store/selectors/applications'
 
 const API_KEYS_TABLE_SIZE = 10
 
+@connect(state => ({ appId: selectSelectedApplicationId(state) }))
 @bind
 export default class ApplicationApiKeys extends React.Component {
 
   constructor (props) {
     super(props)
 
-    const { appId } = props.match.params
+    const appId = props.appId
     this.getApplicationApiKeys = filters => getApplicationApiKeys(filters, appId)
   }
 
   baseDataSelector (state) {
-    const { appId } = this.props.match.params
+    const { appId } = this.props
 
     return {
       keys: selectApplicationApiKeysById(state, appId),
