@@ -28,21 +28,22 @@ import { ApiKeyCreateForm } from '../../../components/api-key-form'
 
 import { getGatewayRights } from '../../store/actions/gateways'
 import {
-  selectGatewayRightsById,
+  selectSelectedGatewayId,
+  selectSelectedGatewayRights,
   selectGatewayRightsError,
   selectGatewayRightsFetching,
 } from '../../store/selectors/gateways'
 
 import api from '../../api'
 
-@connect(function (state, props) {
-  const gtwId = props.match.params.gtwId
+@connect(function (state) {
+  const gtwId = selectSelectedGatewayId(state)
 
   return {
     gtwId,
     fetching: selectGatewayRightsFetching(state),
     error: selectGatewayRightsError(state),
-    rights: selectGatewayRightsById(state, gtwId),
+    rights: selectSelectedGatewayRights(state),
   }
 },
 dispatch => ({

@@ -33,7 +33,8 @@ import {
   GET_GTW_RIGHTS_LIST_BASE,
 } from '../../store/actions/gateways'
 import {
-  selectGatewayRightsById,
+  selectSelectedGatewayRights,
+  selectSelectedGatewayId,
 } from '../../store/selectors/gateways'
 import {
   selectApiKeyById,
@@ -57,14 +58,14 @@ const selectPageError = createErrorSelector([
 ])
 
 @connect(function (state, props) {
-  const { gtwId, apiKeyId } = props.match.params
-
+  const { apiKeyId } = props.match.params
+  const gtwId = selectSelectedGatewayId(state)
 
   return {
     apiKeyId,
     gtwId,
     apiKey: selectApiKeyById(state, apiKeyId),
-    rights: selectGatewayRightsById(state, gtwId),
+    rights: selectSelectedGatewayRights(state),
     fetching: selectPageFetching(state),
     error: selectPageError(state),
   }

@@ -14,6 +14,7 @@
 
 import { getGatewayId } from '../../../lib/selectors/id'
 import {
+  GET_GTW,
   GET_GTW_SUCCESS,
   GET_GTWS_LIST_SUCCESS,
 } from '../actions/gateways'
@@ -25,21 +26,39 @@ const gateway = function (state = {}, gateway) {
   }
 }
 
-const gateways = function (state = {}, action) {
+const defaultState = {
+  entities: {},
+  selectedGateway: null,
+}
+
+const gateways = function (state = defaultState, action) {
   switch (action.type) {
+  case GET_GTW:
+    return {
+      ...state,
+      selectedGateway: action.id,
+    }
   case GET_GTWS_LIST_SUCCESS:
-    return action.entities.reduce(function (acc, app) {
+    const entities = action.entities.reduce(function (acc, app) {
       const id = getGatewayId(app)
 
       acc[id] = gateway(acc[id], app)
       return acc
-    }, { ...state })
+    }, { ...state.entities })
+
+    return {
+      ...state,
+      entities,
+    }
   case GET_GTW_SUCCESS:
     const id = getGatewayId(action.gateway)
 
     return {
       ...state,
-      [id]: gateway(state[id], action.gateway),
+      entities: {
+        ...state.entities,
+        [id]: gateway(state[id], action.gateway),
+      },
     }
   default:
     return state

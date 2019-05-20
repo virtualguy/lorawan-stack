@@ -31,7 +31,9 @@ const ENTITY = 'gateways'
 
 // gatway
 export const selectGatewayStore = state => state.gateways
-export const selectGatewayById = (state, id) => selectGatewayStore(state)[id]
+export const selectGatewayEntitiesStore = state => selectGatewayStore(state).entities
+export const selectGatewayById = (state, id) => selectGatewayEntitiesStore(state)[id]
+export const selectSelectedGatewayId = state => selectGatewayStore(state).selectedGateway
 export const selectGatewayFetching = createFetchingSelector(GET_GTW_BASE)
 export const selectGatewayError = createErrorSelector(GET_GTW_BASE)
 
@@ -48,5 +50,6 @@ export const selectGatewaysError = state => selectGtwsError(state)
 
 // rights
 export const selectGatewayRightsById = createRightsSelectorById(ENTITY)
+export const selectSelectedGatewayRights = state => selectGatewayRightsById(state, selectSelectedGatewayId(state))
 export const selectGatewayRightsFetching = createFetchingSelector(GET_GTW_RIGHTS_LIST_BASE)
 export const selectGatewayRightsError = createErrorSelector(GET_GTW_RIGHTS_LIST_BASE)

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from 'react'
+import { connect } from 'react-redux'
 import { Container, Row, Col } from 'react-grid-system'
 import bind from 'autobind-decorator'
 
@@ -26,21 +27,25 @@ import {
   selectGatewayTotalCountById,
   selectGatewayApiKeysFetching,
 } from '../../store/selectors/api-keys'
+import {
+  selectSelectedGatewayId,
+} from '../../store/selectors/gateways'
 
 const API_KEYS_TABLE_SIZE = 10
 
+@connect(state => ({ gtwId: selectSelectedGatewayId(state) }))
 @bind
 export default class GatewayApiKeys extends React.Component {
 
   constructor (props) {
     super(props)
 
-    const { gtwId } = props.match.params
+    const gtwId = props.gtwId
     this.getGatewayApiKeys = filters => getGatewayApiKeys(filters, gtwId)
   }
 
   baseDataSelector (state) {
-    const { gtwId } = this.props.match.params
+    const { gtwId } = this.props
 
     return {
       keys: selectGatewayApiKeysById(state, gtwId),

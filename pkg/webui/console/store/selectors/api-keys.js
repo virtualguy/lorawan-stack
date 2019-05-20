@@ -22,6 +22,7 @@ import {
   createGetApiKeysBaseActionType,
 } from '../actions/api-keys'
 import { selectSelectedApplicationId } from './applications'
+import { selectSelectedGatewayId } from './gateways'
 import {
   createPaginationIdsSelectorByEntityAndId,
   createPaginationTotalCountSelectorByEntityAndId,
@@ -57,6 +58,16 @@ export const selectApplicationApiKeysById = (state, appId) => selectAppApiKeysId
 export const selectApplicationTotalCountById = (state, appId) => selectAppApiKeysTotalCountById(state, appId)
 export const selectApplicationApiKeysFetching = state => selectAppApiKeysFetching(state)
 export const selectApplicationApiKeysError = state => selectAppApiKeysError(state)
+
+// gateway api key
+export const selectSelectedGatewayApiKey = function (state, keyId) {
+  const key = selectApiKeyById(state, keyId) || {}
+  const selectedGtwId = selectSelectedGatewayId(state)
+
+  if (key.entityId === selectedGtwId) {
+    return key
+  }
+}
 
 // gateway api keys
 const GTW_ENTITY = 'apiKeysByGateway'

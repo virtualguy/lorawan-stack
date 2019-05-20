@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from 'react'
+import { connect } from 'react-redux'
 import { Switch, Route } from 'react-router'
 
 import sharedMessages from '../../../lib/shared-messages'
@@ -25,8 +26,11 @@ import GatewayApiKeysList from '../gateway-api-keys-list'
 import GatewayApiKeyAdd from '../gateway-api-key-add'
 import GatewayApiKeyEdit from '../gateway-api-key-edit'
 
+import { selectSelectedGatewayId } from '../../store/selectors/gateways'
+
+@connect(state => ({ gtwId: selectSelectedGatewayId(state) }))
 @withBreadcrumb('gateways.single.api-keys', function (props) {
-  const gtwId = props.match.params.gtwId
+  const { gtwId } = props
 
   return (
     <Breadcrumb
