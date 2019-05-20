@@ -15,11 +15,15 @@
 import {
   GET_GTWS_LIST_BASE,
   GET_GTW_BASE,
+  GET_GTW_RIGHTS_LIST_BASE,
 } from '../actions/gateways'
 import {
   createPaginationIdsSelectorByEntity,
   createPaginationTotalCountSelectorByEntity,
 } from './pagination'
+import {
+  createRightsSelectorById,
+} from './rights'
 import { createFetchingSelector } from './fetching'
 import { createErrorSelector } from './error'
 
@@ -41,3 +45,8 @@ export const selectGateways = state => selectGtwsIds(state).map(id => selectGate
 export const selectGatewaysTotalCount = state => selectGtwsTotalCount(state)
 export const selectGatewaysFetching = state => selectGtwsFetching(state)
 export const selectGatewaysError = state => selectGtwsError(state)
+
+// rights
+export const selectGatewayRightsById = createRightsSelectorById(ENTITY)
+export const selectGatewayRightsFetching = createFetchingSelector(GET_GTW_RIGHTS_LIST_BASE)
+export const selectGatewayRightsError = createErrorSelector(GET_GTW_RIGHTS_LIST_BASE)

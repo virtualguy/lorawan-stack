@@ -12,26 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export const createGetRightsListActionType = name => (
-  `GET_${name}_RIGHTS_LIST_REQUEST`
+export const createGetRightsBaseActionType = name => (
+  `GET_${name}_RIGHTS_LIST`
 )
 
-export const createGetRightsListSuccessActionType = name => (
-  `GET_${name}_RIGHTS_LIST_SUCCESS`
+export const createGetRightsActionType = name => (
+  `${createGetRightsBaseActionType(name)}_REQUEST`
 )
 
-export const createGetRightsListFailureActionType = name => (
-  `GET_${name}_RIGHTS_LIST_FAILURE`
+export const createGetRightsSuccessActionType = name => (
+  `${createGetRightsBaseActionType(name)}_SUCCESS`
 )
 
-export const getRightsList = name => id => (
-  { type: createGetRightsListActionType(name), id }
+export const createGetRightsFailureActionType = name => (
+  `${createGetRightsBaseActionType(name)}_FAILURE`
 )
 
-export const getRightsListSuccess = name => rights => (
-  { type: createGetRightsListSuccessActionType(name), rights }
+export const getRights = name => entityId => (
+  { type: createGetRightsActionType(name), entityId }
 )
 
-export const getRightsListFailure = name => error => (
-  { type: createGetRightsListFailureActionType(name), error }
+export const getRightsSuccess = name => (rights, entityId) => (
+  { type: createGetRightsSuccessActionType(name), rights, entityId }
+)
+
+export const getRightsFailure = name => error => (
+  { type: createGetRightsFailureActionType(name), error }
 )

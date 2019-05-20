@@ -13,17 +13,6 @@
 // limitations under the License.
 
 import {
-  getApiKeysList,
-  createGetApiKeysListActionType,
-  getApiKeysListFailure,
-  createGetApiKeysListFailureActionType,
-  getApiKeysListSuccess,
-  createGetApiKeysListSuccessActionType,
-  getApiKey,
-  createGetApiKeyActionType,
-} from '../actions/api-keys'
-
-import {
   getCollaboratorsList,
   createGetCollaboratorsListActionType,
   getCollaboratorsListFailure,
@@ -49,13 +38,6 @@ import {
 
 export const SHARED_NAME = 'APPLICATION'
 
-export const GET_APP = 'GET_APPLICATION'
-export const GET_APP_SUCCESS = 'GET_APPLICATION_SUCCESS'
-export const GET_APP_FAILURE = 'GET_APPLICATION_FAILURE'
-export const GET_APP_API_KEYS_LIST = createGetApiKeysListActionType(SHARED_NAME)
-export const GET_APP_API_KEYS_LIST_SUCCESS = createGetApiKeysListSuccessActionType(SHARED_NAME)
-export const GET_APP_API_KEYS_LIST_FAILURE = createGetApiKeysListFailureActionType(SHARED_NAME)
-export const GET_APP_API_KEY_PAGE_DATA = createGetApiKeyActionType(SHARED_NAME)
 export const GET_APP_COLLABORATOR_PAGE_DATA = createGetCollaboratorActionType(SHARED_NAME)
 export const GET_APP_COLLABORATORS_LIST = createGetCollaboratorsListActionType(SHARED_NAME)
 export const GET_APP_COLLABORATORS_LIST_SUCCESS = createGetCollaboratorsListSuccessActionType(SHARED_NAME)
@@ -65,26 +47,6 @@ export const START_APP_EVENT_STREAM_SUCCESS = createStartEventsStreamSuccessActi
 export const START_APP_EVENT_STREAM_FAILURE = createStartEventsStreamFailureActionType(SHARED_NAME)
 export const STOP_APP_EVENT_STREAM = createStopEventsStreamActionType(SHARED_NAME)
 export const CLEAR_APP_EVENTS = createClearEventsActionType(SHARED_NAME)
-
-export const getApplication = id => (
-  { type: GET_APP, id }
-)
-
-export const getApplicationSuccess = application => (
-  { type: GET_APP_SUCCESS, application }
-)
-
-export const getApplicationFailure = error => (
-  { type: GET_APP_FAILURE, error }
-)
-
-export const getApplicationApiKeysList = getApiKeysList(SHARED_NAME)
-
-export const getApplicationApiKeysListSuccess = getApiKeysListSuccess(SHARED_NAME)
-
-export const getApplicationApiKeysListFailure = getApiKeysListFailure(SHARED_NAME)
-
-export const getApplicationApiKeyPageData = getApiKey(SHARED_NAME)
 
 export const getApplicationCollaboratorsList = getCollaboratorsList(SHARED_NAME)
 

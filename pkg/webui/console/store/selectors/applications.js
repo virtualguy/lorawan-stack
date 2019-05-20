@@ -12,16 +12,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { GET_APPS_LIST_BASE, SEARCH_APPS_LIST_BASE } from '../actions/applications'
+import {
+  GET_APPS_LIST_BASE,
+  GET_APP_BASE,
+  GET_APP_RIGHTS_LIST_BASE,
+} from '../actions/applications'
+import {
+  createPaginationIdsSelectorByEntity,
+  createPaginationTotalCountSelectorByEntity,
+} from './pagination'
+import {
+  createRightsSelectorById,
+} from './rights'
 import { createFetchingSelector } from './fetching'
 import { createErrorSelector } from './error'
 
-const selectAppsStore = state => state.applications
-const selectAppsFetching = createFetchingSelector([ GET_APPS_LIST_BASE, SEARCH_APPS_LIST_BASE ])
-const selectAppsError = createErrorSelector([ GET_APPS_LIST_BASE, SEARCH_APPS_LIST_BASE ])
+const ENTITY = 'applications'
+
+// application
+export const selectApplicationStore = state => state.applications
+export const selectApplicationById = (state, id) => selectApplicationStore(state)[id]
+export const selectApplicationFetching = createFetchingSelector(GET_APP_BASE)
+export const selectApplicationError = createErrorSelector(GET_APP_BASE)
 
 // applications
-export const selectApplications = state => selectAppsStore(state).applications
-export const selectApplicationsTotalCount = state => selectAppsStore(state).totalCount
+const selectAppsIds = createPaginationIdsSelectorByEntity(ENTITY)
+const selectAppsTotalCount = createPaginationTotalCountSelectorByEntity(ENTITY)
+const selectAppsFetching = createFetchingSelector(GET_APPS_LIST_BASE)
+const selectAppsError = createErrorSelector(GET_APPS_LIST_BASE)
+
+export const selectApplications = state => selectAppsIds(state).map(id => selectApplicationById(state, id))
+export const selectApplicationsTotalCount = state => selectAppsTotalCount(state)
 export const selectApplicationsFetching = state => selectAppsFetching(state)
 export const selectApplicationsError = state => selectAppsError(state)
+
+// rights
+export const selectApplicationRightsById = createRightsSelectorById(ENTITY)
+export const selectApplicationRightsFetching = createFetchingSelector(GET_APP_RIGHTS_LIST_BASE)
+export const selectApplicationRightsError = createErrorSelector(GET_APP_RIGHTS_LIST_BASE)

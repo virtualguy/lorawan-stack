@@ -13,12 +13,13 @@
 // limitations under the License.
 
 import {
-  getRightsList,
-  createGetRightsListActionType,
-  getRightsListFailure,
-  createGetRightsListFailureActionType,
-  getRightsListSuccess,
-  createGetRightsListSuccessActionType,
+  getRights,
+  createGetRightsActionType,
+  getRightsFailure,
+  createGetRightsFailureActionType,
+  getRightsSuccess,
+  createGetRightsSuccessActionType,
+  createGetRightsBaseActionType,
 } from './rights'
 
 import {
@@ -31,11 +32,31 @@ import {
   createGetBaseActionType,
 } from './pagination'
 
+import {
+  getApiKey,
+  createGetApiKeyActionType,
+  getApiKeySuccess,
+  createGetApiKeySuccessActionType,
+  getApiKeyFailure,
+  createGetApiKeyFailureActionType,
+  getApiKeys,
+  createGetApiKeysActionType,
+  getApiKeysSuccess,
+  createGetApiKeysSuccessActionType,
+  getApiKeysFailure,
+  createGetApiKeysFailureActionType,
+  createGetApiKeyBaseActionType,
+  createGetApiKeysSharedName,
+} from './api-keys'
+
 // utils
 export const SHARED_NAME = 'GATEWAYS'
 export const SHARED_NAME_SINGLE = 'GATEWAY'
-export const GET_GTWS_LIST_BASE = createGetBaseActionType(SHARED_NAME)
+export const SHARED_NAME_API_KEYS = createGetApiKeysSharedName(SHARED_NAME_SINGLE)
 export const GET_GTW_BASE = 'GET_GATEWAY'
+export const GET_GTWS_LIST_BASE = createGetBaseActionType(SHARED_NAME)
+export const GET_GTW_API_KEY_BASE = createGetApiKeyBaseActionType(SHARED_NAME_SINGLE)
+export const GET_GTW_RIGHTS_LIST_BASE = createGetRightsBaseActionType(SHARED_NAME_SINGLE)
 
 // gateway
 export const GET_GTW = `${GET_GTW_BASE}_REQUEST`
@@ -62,10 +83,28 @@ export const getGatewaysSuccess = getPaginationSuccess(SHARED_NAME)
 export const getGatewaysFailure = getPaginationFailure(SHARED_NAME)
 
 // rights
-export const GET_GTWS_RIGHTS_LIST = createGetRightsListActionType(SHARED_NAME)
-export const GET_GTWS_RIGHTS_LIST_SUCCESS = createGetRightsListSuccessActionType(SHARED_NAME)
-export const GET_GTWS_RIGHTS_LIST_FAILURE = createGetRightsListFailureActionType(SHARED_NAME)
+export const GET_GTW_RIGHTS_LIST = createGetRightsActionType(SHARED_NAME_SINGLE)
+export const GET_GTW_RIGHTS_LIST_SUCCESS = createGetRightsSuccessActionType(SHARED_NAME_SINGLE)
+export const GET_GTW_RIGHTS_LIST_FAILURE = createGetRightsFailureActionType(SHARED_NAME_SINGLE)
 
-export const getGatewaysRightsList = getRightsList(SHARED_NAME)
-export const getGatewaysRightsListSuccess = getRightsListSuccess(SHARED_NAME)
-export const getGatewaysRightsListFailure = getRightsListFailure(SHARED_NAME)
+export const getGatewayRights = getRights(SHARED_NAME_SINGLE)
+export const getGatewayRightsSuccess = getRightsSuccess(SHARED_NAME_SINGLE)
+export const getGatewayRightsFailure = getRightsFailure(SHARED_NAME_SINGLE)
+
+// api keys
+export const GET_GTW_API_KEYS = createGetApiKeysActionType(SHARED_NAME_SINGLE)
+export const GET_GTW_API_KEYS_SUCCESS = createGetApiKeysSuccessActionType(SHARED_NAME_SINGLE)
+export const GET_GTW_API_KEYS_FAILURE = createGetApiKeysFailureActionType(SHARED_NAME_SINGLE)
+
+export const getGatewayApiKeys = getApiKeys(SHARED_NAME_SINGLE)
+export const getGatewayApiKeysSuccess = getApiKeysSuccess(SHARED_NAME_SINGLE)
+export const getGatewayApiKeysFailure = getApiKeysFailure(SHARED_NAME_SINGLE)
+
+// api key
+export const GET_GTW_API_KEY = createGetApiKeyActionType(SHARED_NAME_SINGLE)
+export const GET_GTW_API_KEY_SUCCESS = createGetApiKeySuccessActionType(SHARED_NAME_SINGLE)
+export const GET_GTW_API_KEY_FAILURE = createGetApiKeyFailureActionType(SHARED_NAME_SINGLE)
+
+export const getGatewayApiKey = getApiKey(SHARED_NAME_SINGLE)
+export const getGatewayApiKeySuccess = getApiKeySuccess(SHARED_NAME_SINGLE)
+export const getGatewayApiKeyFailure = getApiKeyFailure(SHARED_NAME_SINGLE)

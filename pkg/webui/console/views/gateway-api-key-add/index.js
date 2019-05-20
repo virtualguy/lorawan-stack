@@ -26,28 +26,29 @@ import Message from '../../../lib/components/message'
 import IntlHelmet from '../../../lib/components/intl-helmet'
 import { ApiKeyCreateForm } from '../../../components/api-key-form'
 
-import { getGatewaysRightsList } from '../../store/actions/gateways'
-import { getGatewayId } from '../../../lib/selectors/id'
+import { getGatewayRights } from '../../store/actions/gateways'
 import {
-  gatewaySelector,
-  gatewayRightsSelector,
-  gatewayRightsErrorSelector,
-  gatewayRightsFetchingSelector,
-} from '../../store/selectors/gateway'
+  selectGatewayRightsById,
+  selectGatewayRightsError,
+  selectGatewayRightsFetching,
+} from '../../store/selectors/gateways'
 
 import api from '../../api'
 
 @connect(function (state, props) {
-  const gateway = gatewaySelector(state, props)
-  const gtwId = getGatewayId(gateway)
+  const gtwId = props.match.params.gtwId
 
   return {
     gtwId,
-    fetching: gatewayRightsFetchingSelector(state, props),
-    error: gatewayRightsErrorSelector(state, props),
-    rights: gatewayRightsSelector(state, props),
+    fetching: selectGatewayRightsFetching(state),
+    error: selectGatewayRightsError(state),
+    rights: selectGatewayRightsById(state, gtwId),
   }
-})
+},
+dispatch => ({
+  getGatewayRights: gtwId => dispatch(getGatewayRights(gtwId)),
+  handleApprove: gtwId => dispatch(replace(`/console/gateways/${gtwId}/api-keys`)),
+}))
 @withBreadcrumb('gtws.single.api-keys.add', function (props) {
   const gtwId = props.gtwId
 
@@ -69,15 +70,15 @@ export default class GatewayApiKeyAdd extends React.Component {
   }
 
   componentDidMount () {
-    const { dispatch, gtwId } = this.props
+    const { getGatewayRights, gtwId } = this.props
 
-    dispatch(getGatewaysRightsList(gtwId))
+    getGatewayRights(gtwId)
   }
 
   handleApprove () {
-    const { dispatch, gtwId } = this.props
+    const { handleApprove, gtwId } = this.props
 
-    dispatch(replace(`/console/gateways/${gtwId}/api-keys`))
+    handleApprove(gtwId)
   }
 
   render () {

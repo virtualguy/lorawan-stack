@@ -26,12 +26,12 @@ import Message from '../../../lib/components/message'
 import IntlHelmet from '../../../lib/components/intl-helmet'
 import { ApiKeyCreateForm } from '../../../components/api-key-form'
 
-import { getApplicationsRightsList } from '../../store/actions/applications'
+import { getApplicationRights } from '../../store/actions/applications'
 import {
-  applicationRightsSelector,
-  applicationRightsErrorSelector,
-  applicationRightsFetchingSelector,
-} from '../../store/selectors/application'
+  selectApplicationRightsById,
+  selectApplicationRightsFetching,
+  selectApplicationRightsError,
+} from '../../store/selectors/applications'
 import api from '../../api'
 
 @connect(function (state, props) {
@@ -39,11 +39,15 @@ import api from '../../api'
 
   return {
     appId,
-    fetching: applicationRightsFetchingSelector(state, props),
-    error: applicationRightsErrorSelector(state, props),
-    rights: applicationRightsSelector(state, props),
+    fetching: selectApplicationRightsFetching(state),
+    error: selectApplicationRightsError(state),
+    rights: selectApplicationRightsById(state, appId),
   }
-})
+},
+dispatch => ({
+  getApplicationRights: appId => dispatch(getApplicationRights(appId)),
+  handleApprove: appId => dispatch(replace(`/console/applications/${appId}/api-keys`)),
+}))
 @withBreadcrumb('apps.single.api-keys.add', function (props) {
   const appId = props.appId
   return (
@@ -64,15 +68,15 @@ export default class ApplicationApiKeyAdd extends React.Component {
   }
 
   componentDidMount () {
-    const { dispatch, appId } = this.props
+    const { getApplicationRights, appId } = this.props
 
-    dispatch(getApplicationsRightsList(appId))
+    getApplicationRights(appId)
   }
 
   handleApprove () {
-    const { dispatch, appId } = this.props
+    const { handleApprove, appId } = this.props
 
-    dispatch(replace(`/console/applications/${appId}/api-keys`))
+    handleApprove(appId)
   }
 
   render () {

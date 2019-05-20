@@ -22,19 +22,25 @@ import DevicesTable from '../../containers/devices-table'
 
 const DEVICES_TABLE_SIZE = 25
 
-@connect(function ({ application }, props) {
+@connect(function (state, props) {
+  const { appId } = props.match.params
   return {
-    application: application.application,
+    appId,
   }
 })
 class ApplicationDeviceList extends React.Component {
   render () {
+    const { appId } = this.props
+
     return (
       <Container>
         <Row>
           <IntlHelmet title={sharedMessages.devices} />
           <Col sm={12}>
-            <DevicesTable pageSize={DEVICES_TABLE_SIZE} />
+            <DevicesTable
+              pageSize={DEVICES_TABLE_SIZE}
+              appId={appId}
+            />
           </Col>
         </Row>
       </Container>

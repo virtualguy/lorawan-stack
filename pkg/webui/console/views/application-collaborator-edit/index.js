@@ -35,6 +35,13 @@ import toast from '../../../components/toast'
 import SubmitBar from '../../../components/submit-bar'
 
 import { getApplicationCollaboratorPageData } from '../../store/actions/application'
+import {
+  selectSelectedApplicationRights,
+  selectSelectedApplicationId,
+  selectApplicationRightsFetching,
+  selectApplicationRightsError,
+} from '../../store/selectors/applications'
+
 import api from '../../api'
 
 import style from './application-collaborator-edit.styl'
@@ -57,17 +64,16 @@ const m = defineMessages({
     'Are you sure you want to remove {collaboratorId} as a collaborator?',
 })
 
-@connect(function ({ collaborators, rights }, props) {
-  const { appId, collaboratorId } = props.match.params
-  const collaboratorsFetching = collaborators.applications.fetching
-  const rightsFetching = rights.applications.fetching
-  const collaboratorsError = collaborators.applications.error
-  const rightsError = rights.applications.error
+@connect(function (state, props) {
+  const { collaboratorId } = props.match.params
+  const appId = selectSelectedApplicationId(state)
+  const collaboratorsFetching = state.collaborators.applications.fetching
+  const rightsFetching = selectApplicationRightsFetching(state)
+  const collaboratorsError = state.collaborators.applications.error
+  const rightsError = selectApplicationRightsError(state)
 
-  const appRights = rights.applications
-  const rs = appRights ? appRights.rights : []
-
-  const appCollaborators = collaborators.applications[appId]
+  const rights = selectSelectedApplicationRights(state)
+  const appCollaborators = state.collaborators.applications[appId]
   const collaborator = appCollaborators ? appCollaborators.collaborators
     .find(c => c.id === collaboratorId) : undefined
 
@@ -75,7 +81,7 @@ const m = defineMessages({
     collaboratorId,
     collaborator,
     appId,
-    rights: rs,
+    rights,
     fetching: collaboratorsFetching || rightsFetching,
     error: collaboratorsError || rightsError,
   }

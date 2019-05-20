@@ -18,8 +18,13 @@ import bind from 'autobind-decorator'
 
 import IntlHelmet from '../../../lib/components/intl-helmet'
 import ApiKeysTable from '../../containers/api-keys-table'
-import { getApplicationApiKeysList } from '../../store/actions/application'
 import sharedMessages from '../../../lib/shared-messages'
+import { getApplicationApiKeys } from '../../store/actions/applications'
+import {
+  selectApplicationApiKeysById,
+  selectApplicationTotalCountById,
+  selectApplicationApiKeysFetching,
+} from '../../store/selectors/api-keys'
 
 const API_KEYS_TABLE_SIZE = 10
 
@@ -30,12 +35,17 @@ export default class ApplicationApiKeys extends React.Component {
     super(props)
 
     const { appId } = props.match.params
-    this.getApplicationsApiKeysList = filters => getApplicationApiKeysList(appId, filters)
+    this.getApplicationApiKeys = filters => getApplicationApiKeys(filters, appId)
   }
 
-  baseDataSelector ({ apiKeys }) {
+  baseDataSelector (state) {
     const { appId } = this.props.match.params
-    return apiKeys.applications[appId] || {}
+
+    return {
+      keys: selectApplicationApiKeysById(state, appId),
+      totalCount: selectApplicationTotalCountById(state, appId),
+      fetching: selectApplicationApiKeysFetching(state),
+    }
   }
 
   render () {
@@ -47,7 +57,7 @@ export default class ApplicationApiKeys extends React.Component {
             <ApiKeysTable
               pageSize={API_KEYS_TABLE_SIZE}
               baseDataSelector={this.baseDataSelector}
-              getItemsAction={this.getApplicationsApiKeysList}
+              getItemsAction={this.getApplicationApiKeys}
             />
           </Col>
         </Row>

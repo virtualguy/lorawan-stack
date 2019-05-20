@@ -31,8 +31,8 @@ export const createGetPaginationFailureActionType = name => (
 export const getPagination = name => (params, entityId) => (
   { type: createGetPaginationActionType(name), params, entityId }
 )
-export const getPaginationSuccess = name => (entities, totalCount) => (
-  { type: createGetPaginationSuccessActionType(name), entities, totalCount }
+export const getPaginationSuccess = name => (entities, totalCount, entityId) => (
+  { type: createGetPaginationSuccessActionType(name), entities, totalCount, entityId }
 )
 export const getPaginationFailure = name => error => (
   { type: createGetPaginationFailureActionType(name), error }

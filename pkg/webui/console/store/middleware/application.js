@@ -18,45 +18,6 @@ import api from '../../api'
 import * as application from '../actions/application'
 import createEventsConnectLogics from './events'
 
-const getApplicationLogic = createLogic({
-  type: [ application.GET_APP ],
-  async process ({ getState, action }, dispatch, done) {
-    const { id } = action
-    try {
-      const app = await api.application.get(id, 'name,description')
-      dispatch(application.getApplicationSuccess(app))
-    } catch (e) {
-      dispatch(application.getApplicationFailure(e))
-    }
-
-    done()
-  },
-})
-
-const getApplicationApiKeysLogic = createLogic({
-  type: [
-    application.GET_APP_API_KEYS_LIST,
-    application.GET_APP_API_KEY_PAGE_DATA,
-  ],
-  async process ({ getState, action }, dispatch, done) {
-    const { id, params } = action
-    try {
-      const res = await api.application.apiKeys.list(id, params)
-      dispatch(
-        application.getApplicationApiKeysListSuccess(
-          id,
-          res.api_keys,
-          res.totalCount
-        )
-      )
-    } catch (e) {
-      dispatch(application.getApplicationApiKeysListFailure(id, e))
-    }
-
-    done()
-  },
-})
-
 const getApplicationCollaboratorsLogic = createLogic({
   type: [
     application.GET_APP_COLLABORATOR_PAGE_DATA,
@@ -96,8 +57,6 @@ const getApplicationCollaboratorsLogic = createLogic({
 })
 
 export default [
-  getApplicationLogic,
-  getApplicationApiKeysLogic,
   getApplicationCollaboratorsLogic,
   ...createEventsConnectLogics(application.SHARED_NAME, 'application'),
 ]

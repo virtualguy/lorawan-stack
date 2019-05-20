@@ -13,47 +13,50 @@
 // limitations under the License.
 
 import { combineReducers } from 'redux'
-import { SHARED_NAME as APPLICATION_SHARED_NAME } from '../actions/application'
-import { SHARED_NAME as APPLICATIONS_SHARED_NAME } from '../actions/applications'
-import { SHARED_NAME as GATEWAY_SHARED_NAME } from '../actions/gateway'
-import { SHARED_NAME as GATEWAYS_SHARED_NAME } from '../actions/gateways'
+import {
+  SHARED_NAME as APPLICATIONS_SHARED_NAME,
+  SHARED_NAME_SINGLE as APPLICATION_SHARED_NAME,
+  SHARED_NAME_API_KEYS as APPLICATION_API_KEYS_SHARED_NAME,
+} from '../actions/applications'
+import {
+  SHARED_NAME as GATEWAYS_SHARED_NAME,
+  SHARED_NAME_SINGLE as GATEWAY_SHARED_NAME,
+  SHARED_NAME_API_KEYS as GATEWAY_API_KEYS_SHARED_NAME,
+} from '../actions/gateways'
 import { SHARED_NAME as DEVICE_SHARED_NAME } from '../actions/device'
 import user from './user'
 import client from './client'
 import init from './init'
 import applications from './applications'
-import application from './application'
 import devices from './devices'
 import device from './device'
 import gateways from './gateways'
 import gateway from './gateway'
 import configuration from './configuration'
-import createNamedApiKeysReducer from './api-keys'
+import apiKeys from './api-keys'
 import createNamedRightsReducer from './rights'
 import createNamedCollaboratorsReducer from './collaborators'
 import createNamedEventsReducer from './events'
 import fetching from './ui/fetching'
 import error from './ui/error'
-import createNamedPaginationReducer from './pagination'
+import createNamedPaginationReducer, {
+  createNamedPaginationReducerById,
+} from './pagination'
 
 export default combineReducers({
   user,
   client,
   init,
   applications,
-  application,
   devices,
   device,
   gateways,
   gateway,
   configuration,
-  apiKeys: combineReducers({
-    applications: createNamedApiKeysReducer(APPLICATION_SHARED_NAME),
-    gateways: createNamedApiKeysReducer(GATEWAY_SHARED_NAME),
-  }),
+  apiKeys,
   rights: combineReducers({
-    applications: createNamedRightsReducer(APPLICATIONS_SHARED_NAME),
-    gateways: createNamedRightsReducer(GATEWAYS_SHARED_NAME),
+    applications: createNamedRightsReducer(APPLICATION_SHARED_NAME),
+    gateways: createNamedRightsReducer(GATEWAY_SHARED_NAME),
   }),
   collaborators: combineReducers({
     applications: createNamedCollaboratorsReducer(APPLICATION_SHARED_NAME),
@@ -70,5 +73,7 @@ export default combineReducers({
   pagination: combineReducers({
     applications: createNamedPaginationReducer(APPLICATIONS_SHARED_NAME),
     gateways: createNamedPaginationReducer(GATEWAYS_SHARED_NAME),
+    apiKeysByApplication: createNamedPaginationReducerById(APPLICATION_API_KEYS_SHARED_NAME),
+    apiKeysByGateway: createNamedPaginationReducerById(GATEWAY_API_KEYS_SHARED_NAME),
   }),
 })

@@ -18,24 +18,8 @@ import sharedMessages from '../../../lib/shared-messages'
 import api from '../../api'
 import * as gateway from '../actions/gateway'
 import { gsConfigSelector } from '../../../lib/selectors/env'
-import { gatewaySelector } from '../selectors/gateway'
+import { selectGatewayById } from '../selectors/gateways'
 import createEventsConnectLogics from './events'
-
-const getGatewayLogic = createLogic({
-  type: gateway.GET_GTW,
-  async process ({ action }, dispatch, done) {
-    const { id, meta = {}} = action
-    try {
-      const selectors = meta.selectors || ''
-      const gtw = await api.gateway.get(id, selectors)
-      dispatch(gateway.getGatewaySuccess(gtw))
-    } catch (error) {
-      dispatch(gateway.getGatewayFailure(error))
-    }
-
-    done()
-  },
-})
 
 const startGatewayStatisticsLogic = createLogic({
   type: gateway.START_GTW_STATS,
@@ -47,7 +31,7 @@ const startGatewayStatisticsLogic = createLogic({
   warnTimeout: 0,
   validate ({ getState, action }, allow, reject) {
     const gsConfig = gsConfigSelector()
-    const gtw = gatewaySelector(getState())
+    const gtw = selectGatewayById(getState(), action.id)
 
     if (!gsConfig.enabled) {
       reject(gateway.updateGatewayStatisticsUnavailable())
@@ -110,34 +94,8 @@ const updateGatewayStatisticsLogic = createLogic({
   },
 })
 
-const getGatewayApiKeysLogic = createLogic({
-  type: [
-    gateway.GET_GTW_API_KEY_PAGE_DATA,
-    gateway.GET_GTW_API_KEYS_LIST,
-  ],
-  async process ({ action }, dispatch, done) {
-    const { id, params } = action
-    try {
-      const res = await api.gateway.apiKeys.list(id, params)
-      dispatch(
-        gateway.getGatewayApiKeysListSuccess(
-          id,
-          res.api_keys,
-          res.totalCount
-        )
-      )
-    } catch (e) {
-      dispatch(gateway.getGatewayApiKeysListFailure(id, e))
-    }
-
-    done()
-  },
-})
-
 export default [
-  getGatewayLogic,
   startGatewayStatisticsLogic,
   updateGatewayStatisticsLogic,
   ...createEventsConnectLogics(gateway.SHARED_NAME, 'gateway'),
-  getGatewayApiKeysLogic,
 ]

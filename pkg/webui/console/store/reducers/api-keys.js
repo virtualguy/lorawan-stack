@@ -12,75 +12,45 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// import {
+//   createGetApiKeysSuccessActionType,
+// } from '../actions/api-keys'
 import {
-  createGetApiKeysListActionType,
-  createGetApiKeysListFailureActionType,
-  createGetApiKeysListSuccessActionType,
-} from '../actions/api-keys'
+  GET_APP_API_KEYS_SUCCESS,
+  GET_APP_API_KEY_SUCCESS,
+} from '../actions/applications'
+import {
+  GET_GTW_API_KEYS_SUCCESS,
+} from '../actions/gateways'
+import { getApiKeyId } from '../../../lib/selectors/id'
 
-const defualtState = {
-  fetching: false,
-  keys: [],
-  totalCount: 0,
-  error: false,
-}
 
-const createNamedApiKeyReducer = function (reducerName = '') {
-  const GET_LIST = createGetApiKeysListActionType(reducerName)
-  const GET_LIST_SUCCESS = createGetApiKeysListSuccessActionType(reducerName)
-  const GET_LIST_FAILURE = createGetApiKeysListFailureActionType(reducerName)
-
-  return function (state = defualtState, action) {
-    switch (action.type) {
-    case GET_LIST:
-      return {
-        ...state,
-        fetching: true,
-      }
-    case GET_LIST_FAILURE:
-      return {
-        ...state,
-        fetching: false,
-        keys: [],
-        totalCount: 0,
-        error: action.error,
-      }
-    case GET_LIST_SUCCESS:
-      return {
-        ...state,
-        keys: action.keys,
-        totalCount: action.totalCount,
-        fetching: false,
-      }
-    default:
-      return state
-    }
+const apiKey = function (state = {}, key) {
+  return {
+    ...state,
+    ...key,
   }
 }
 
-const createNamedAPIKeysReducer = function (reducerName = '') {
-  const GET_LIST = createGetApiKeysListActionType(reducerName)
-  const GET_LIST_SUCCESS = createGetApiKeysListSuccessActionType(reducerName)
-  const GET_LIST_FAILURE = createGetApiKeysListFailureActionType(reducerName)
-  const apiKey = createNamedApiKeyReducer(reducerName)
+const apiKeys = function (state = {}, action) {
+  switch (action.type) {
+  case GET_APP_API_KEYS_SUCCESS:
+  case GET_GTW_API_KEYS_SUCCESS:
+    return action.entities.reduce(function (acc, key) {
+      const id = getApiKeyId(key)
 
-  return function (state = {}, action) {
-    if (!action.id) {
-      return state
+      acc[id] = apiKey(acc[id], key)
+      return acc
+    }, { ...state })
+  case GET_APP_API_KEY_SUCCESS:
+    const id = getApiKeyId(action.key)
+    return {
+      ...state,
+      [id]: apiKey(state[id], action.key),
     }
-
-    switch (action.type) {
-    case GET_LIST:
-    case GET_LIST_FAILURE:
-    case GET_LIST_SUCCESS:
-      return {
-        ...state,
-        [action.id]: apiKey(state[action.id], action),
-      }
-    default:
-      return state
-    }
+  default:
+    return state
   }
 }
 
-export default createNamedAPIKeysReducer
+export default apiKeys

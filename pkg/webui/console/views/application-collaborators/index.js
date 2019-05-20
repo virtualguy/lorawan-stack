@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from 'react'
+import { connect } from 'react-redux'
 import { Switch, Route } from 'react-router'
 
 import sharedMessages from '../../../lib/shared-messages'
@@ -25,9 +26,11 @@ import ApplicationCollaboratorsList from '../application-collaborators-list'
 import ApplicationCollaboratorAdd from '../application-collaborator-add'
 import ApplicationCollaboratorEdit from '../application-collaborator-edit'
 
+import { selectSelectedApplicationId } from '../../store/selectors/applications'
+
+@connect(state => ({ appId: selectSelectedApplicationId(state) }))
 @withBreadcrumb('apps.single.api-keys', function (props) {
-  const { match } = props
-  const appId = match.params.appId
+  const { appId } = props
 
   return (
     <Breadcrumb

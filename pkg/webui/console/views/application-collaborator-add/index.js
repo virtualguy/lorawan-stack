@@ -32,7 +32,14 @@ import IntlHelmet from '../../../lib/components/intl-helmet'
 import { id as collaboratorIdRegexp } from '../../lib/regexp'
 import SubmitBar from '../../../components/submit-bar'
 
-import { getApplicationsRightsList } from '../../store/actions/applications'
+import { getApplicationRights } from '../../store/actions/applications'
+import {
+  selectSelectedApplicationId,
+  selectSelectedApplicationRights,
+  selectApplicationRightsFetching,
+  selectApplicationRightsError,
+} from '../../store/selectors/applications'
+
 import api from '../../api'
 
 import style from './application-collaborator-add.styl'
@@ -50,17 +57,20 @@ const validationSchema = Yup.object().shape({
   ),
 })
 
-@connect(function ({ rights, collaborators }, props) {
-  const appId = props.match.params.appId
+@connect(function (state) {
+  const appId = selectSelectedApplicationId(state)
 
   return {
     appId,
-    collaborators: collaborators.applications.collaborators,
-    fetching: rights.applications.fetching,
-    error: rights.applications.error,
-    rights: rights.applications.rights,
+    collaborators: state.collaborators.applications.collaborators,
+    fetching: selectApplicationRightsFetching(state),
+    error: selectApplicationRightsError(state),
+    rights: selectSelectedApplicationRights(state),
   }
-})
+},
+dispatch => ({
+  getApplicationRights: appId => dispatch(getApplicationRights(appId)),
+}))
 @withBreadcrumb('apps.single.collaborators.add', function (props) {
   const appId = props.appId
   return (
@@ -79,9 +89,9 @@ export default class ApplicationCollaboratorAdd extends React.Component {
   }
 
   componentDidMount () {
-    const { dispatch, appId } = this.props
+    const { getApplicationRights, appId } = this.props
 
-    dispatch(getApplicationsRightsList(appId))
+    getApplicationRights(appId)
   }
 
   async handleSubmit (values, { resetForm }) {

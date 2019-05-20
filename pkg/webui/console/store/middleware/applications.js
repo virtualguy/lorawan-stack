@@ -40,6 +40,7 @@ const getApplicationLogic = createLogic({
 
     try {
       const app = await api.application.get(id, selectors)
+      dispatch(application.startApplicationEventsStream(id))
       dispatch(applications.getApplicationSuccess(app))
     } catch (e) {
       dispatch(applications.getApplicationFailure(e))
@@ -49,19 +50,54 @@ const getApplicationLogic = createLogic({
   },
 })
 
-const getApplicationsRightsLogic = createLogic({
-  type: [
-    applications.GET_APPS_RIGHTS_LIST,
-    application.GET_APP_COLLABORATOR_PAGE_DATA,
-  ],
-  async process ({ getState, action }, dispatch, done) {
-    const { id } = action
+const getApplicationRightsLogic = createLogic({
+  type: applications.GET_APP_RIGHTS_LIST,
+  async process ({ action }, dispatch, done) {
+    const { entityId } = action
     try {
-      const result = await api.rights.applications(id)
+      const result = await api.rights.applications(entityId)
 
-      dispatch(applications.getApplicationsRightsListSuccess(result.rights.sort()))
+      dispatch(applications.getApplicationRightsSuccess(result.rights.sort(), entityId))
     } catch (error) {
-      dispatch(applications.getApplicationsRightsListFailure(error))
+      dispatch(applications.getApplicationRightsFailure(error))
+    }
+
+    done()
+  },
+})
+
+const getApplicationApiKeysLogic = createLogic({
+  type: applications.GET_APP_API_KEYS,
+  async process ({ action }, dispatch, done) {
+    const { entityId, params } = action
+    try {
+      const res = await api.application.apiKeys.list(entityId, params)
+
+      dispatch(
+        applications.getApplicationApiKeysSuccess(
+          res.api_keys.map(key => ({ ...key, entityId })),
+          res.totalCount,
+          entityId,
+        )
+      )
+    } catch (error) {
+      dispatch(applications.getApplicationApiKeysFailure(error))
+    }
+
+    done()
+  },
+})
+
+const getApplicationApiKeyLogic = createLogic({
+  type: applications.GET_APP_API_KEY,
+  async process ({ action }, dispatch, done) {
+    const { entityId, keyId } = action
+    try {
+      const res = await api.application.apiKeys.get(entityId, keyId)
+
+      dispatch(applications.getApplicationApiKeySuccess({ ...res, entityId }))
+    } catch (error) {
+      dispatch(applications.getApplicationApiKeyFailure(error))
     }
 
     done()
@@ -71,5 +107,7 @@ const getApplicationsRightsLogic = createLogic({
 export default [
   getApplicationsLogic,
   getApplicationLogic,
-  getApplicationsRightsLogic,
+  getApplicationRightsLogic,
+  getApplicationApiKeysLogic,
+  getApplicationApiKeyLogic,
 ]

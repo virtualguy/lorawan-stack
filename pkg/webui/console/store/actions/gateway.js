@@ -13,17 +13,6 @@
 // limitations under the License.
 
 import {
-  getApiKeysList,
-  createGetApiKeysListActionType,
-  getApiKeysListFailure,
-  createGetApiKeysListFailureActionType,
-  getApiKeysListSuccess,
-  createGetApiKeysListSuccessActionType,
-  getApiKey,
-  createGetApiKeyActionType,
-} from '../actions/api-keys'
-
-import {
   startEventsStream,
   createStartEventsStreamActionType,
   startEventsStreamSuccess,
@@ -38,9 +27,6 @@ import {
 
 export const SHARED_NAME = 'GATEWAY'
 
-export const GET_GTW = 'GET_GATEWAY'
-export const GET_GTW_SUCCESS = 'GET_GATEWAY_SUCCESS'
-export const GET_GTW_FAILURE = 'GET_GATEWAY_FAILURE'
 export const START_GTW_STATS = 'START_GATEWAY_STATISTICS'
 export const STOP_GTW_STATS = 'STOP_GATEWAY_STATISTICS'
 export const UPDATE_GTW_STATS = 'UPDATE_GATEWAY_STATISTICS'
@@ -52,22 +38,6 @@ export const START_GTW_EVENT_STREAM_SUCCESS = createStartEventsStreamSuccessActi
 export const START_GTW_EVENT_STREAM_FAILURE = createStartEventsStreamFailureActionType(SHARED_NAME)
 export const STOP_GTW_EVENT_STREAM = createStopEventsStreamActionType(SHARED_NAME)
 export const CLEAR_GTW_EVENTS = createClearEventsActionType(SHARED_NAME)
-export const GET_GTW_API_KEYS_LIST = createGetApiKeysListActionType(SHARED_NAME)
-export const GET_GTW_API_KEYS_LIST_SUCCESS = createGetApiKeysListSuccessActionType(SHARED_NAME)
-export const GET_GTW_API_KEYS_LIST_FAILURE = createGetApiKeysListFailureActionType(SHARED_NAME)
-export const GET_GTW_API_KEY_PAGE_DATA = createGetApiKeyActionType(SHARED_NAME)
-
-export const getGateway = (id, meta) => (
-  { type: GET_GTW, id, meta }
-)
-
-export const getGatewaySuccess = gateway => (
-  { type: GET_GTW_SUCCESS, gateway }
-)
-
-export const getGatewayFailure = error => (
-  { type: GET_GTW_FAILURE, error }
-)
 
 export const startGatewayStatistics = (id, meta) => (
   { type: START_GTW_STATS, id, meta }
@@ -102,11 +72,3 @@ export const startGatewayEventsStreamFailure = startEventsStreamFailure(SHARED_N
 export const stopGatewayEventsStream = stopEventsStream(SHARED_NAME)
 
 export const clearGatewayEventsStream = clearEvents(SHARED_NAME)
-
-export const getGatewayApiKeysList = getApiKeysList(SHARED_NAME)
-
-export const getGatewayApiKeysListSuccess = getApiKeysListSuccess(SHARED_NAME)
-
-export const getGatewayApiKeysListFailure = getApiKeysListFailure(SHARED_NAME)
-
-export const getGatewayApiKeyPageData = getApiKey(SHARED_NAME)

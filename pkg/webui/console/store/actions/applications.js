@@ -13,12 +13,13 @@
 // limitations under the License.
 
 import {
-  getRightsList,
-  createGetRightsListActionType,
-  getRightsListFailure,
-  createGetRightsListFailureActionType,
-  getRightsListSuccess,
-  createGetRightsListSuccessActionType,
+  getRights,
+  createGetRightsActionType,
+  getRightsFailure,
+  createGetRightsFailureActionType,
+  getRightsSuccess,
+  createGetRightsSuccessActionType,
+  createGetRightsBaseActionType,
 } from './rights'
 
 import {
@@ -31,11 +32,31 @@ import {
   createGetBaseActionType,
 } from './pagination'
 
+import {
+  getApiKey,
+  createGetApiKeyActionType,
+  getApiKeySuccess,
+  createGetApiKeySuccessActionType,
+  getApiKeyFailure,
+  createGetApiKeyFailureActionType,
+  getApiKeys,
+  createGetApiKeysActionType,
+  getApiKeysSuccess,
+  createGetApiKeysSuccessActionType,
+  getApiKeysFailure,
+  createGetApiKeysFailureActionType,
+  createGetApiKeyBaseActionType,
+  createGetApiKeysSharedName,
+} from './api-keys'
+
 // utils
 export const SHARED_NAME = 'APPLICATIONS'
 export const SHARED_NAME_SINGLE = 'APPLICATION'
-export const GET_APPS_LIST_BASE = createGetBaseActionType(SHARED_NAME)
+export const SHARED_NAME_API_KEYS = createGetApiKeysSharedName(SHARED_NAME_SINGLE)
 export const GET_APP_BASE = 'GET_APPLICATION'
+export const GET_APPS_LIST_BASE = createGetBaseActionType(SHARED_NAME)
+export const GET_APP_API_KEY_BASE = createGetApiKeyBaseActionType(SHARED_NAME_SINGLE)
+export const GET_APP_RIGHTS_LIST_BASE = createGetRightsBaseActionType(SHARED_NAME_SINGLE)
 
 // application
 export const GET_APP = `${GET_APP_BASE}_REQUEST`
@@ -62,10 +83,28 @@ export const getApplicationsSuccess = getPaginationSuccess(SHARED_NAME)
 export const getApplicationsFailure = getPaginationFailure(SHARED_NAME)
 
 // rights
-export const GET_APPS_RIGHTS_LIST = createGetRightsListActionType(SHARED_NAME)
-export const GET_APPS_RIGHTS_LIST_SUCCESS = createGetRightsListSuccessActionType(SHARED_NAME)
-export const GET_APPS_RIGHTS_LIST_FAILURE = createGetRightsListFailureActionType(SHARED_NAME)
+export const GET_APP_RIGHTS_LIST = createGetRightsActionType(SHARED_NAME_SINGLE)
+export const GET_APP_RIGHTS_LIST_SUCCESS = createGetRightsSuccessActionType(SHARED_NAME_SINGLE)
+export const GET_APP_RIGHTS_LIST_FAILURE = createGetRightsFailureActionType(SHARED_NAME_SINGLE)
 
-export const getApplicationsRightsList = getRightsList(SHARED_NAME)
-export const getApplicationsRightsListSuccess = getRightsListSuccess(SHARED_NAME)
-export const getApplicationsRightsListFailure = getRightsListFailure(SHARED_NAME)
+export const getApplicationRights = getRights(SHARED_NAME_SINGLE)
+export const getApplicationRightsSuccess = getRightsSuccess(SHARED_NAME_SINGLE)
+export const getApplicationRightsFailure = getRightsFailure(SHARED_NAME_SINGLE)
+
+// api keys
+export const GET_APP_API_KEYS = createGetApiKeysActionType(SHARED_NAME_SINGLE)
+export const GET_APP_API_KEYS_SUCCESS = createGetApiKeysSuccessActionType(SHARED_NAME_SINGLE)
+export const GET_APP_API_KEYS_FAILURE = createGetApiKeysFailureActionType(SHARED_NAME_SINGLE)
+
+export const getApplicationApiKeys = getApiKeys(SHARED_NAME_SINGLE)
+export const getApplicationApiKeysSuccess = getApiKeysSuccess(SHARED_NAME_SINGLE)
+export const getApplicationApiKeysFailure = getApiKeysFailure(SHARED_NAME_SINGLE)
+
+// api key
+export const GET_APP_API_KEY = createGetApiKeyActionType(SHARED_NAME_SINGLE)
+export const GET_APP_API_KEY_SUCCESS = createGetApiKeySuccessActionType(SHARED_NAME_SINGLE)
+export const GET_APP_API_KEY_FAILURE = createGetApiKeyFailureActionType(SHARED_NAME_SINGLE)
+
+export const getApplicationApiKey = getApiKey(SHARED_NAME_SINGLE)
+export const getApplicationApiKeySuccess = getApiKeySuccess(SHARED_NAME_SINGLE)
+export const getApplicationApiKeyFailure = getApiKeyFailure(SHARED_NAME_SINGLE)

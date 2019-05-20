@@ -26,44 +26,60 @@ import Message from '../../../lib/components/message'
 import IntlHelmet from '../../../lib/components/intl-helmet'
 import { ApiKeyEditForm } from '../../../components/api-key-form'
 
-import { getApplicationApiKeyPageData } from '../../store/actions/application'
 import {
-  applicationRightsSelector,
-  applicationRightsErrorSelector,
-  applicationRightsFetchingSelector,
-  applicationKeySelector,
-  applicationKeysErrorSelector,
-  applicationKeysFetchingSelector,
-} from '../../store/selectors/application'
+  getApplicationApiKey,
+  getApplicationRights,
+  GET_APP_API_KEY_BASE,
+  GET_APP_RIGHTS_LIST_BASE,
+} from '../../store/actions/applications'
+import {
+  selectApplicationRightsById,
+} from '../../store/selectors/applications'
+import {
+  selectApiKeyById,
+} from '../../store/selectors/api-keys'
+import {
+  createFetchingSelector,
+} from '../../store/selectors/fetching'
+import {
+  createErrorSelector,
+} from '../../store/selectors/error'
 
 import api from '../../api'
 
+const selectPageFetching = createFetchingSelector([
+  GET_APP_API_KEY_BASE,
+  GET_APP_RIGHTS_LIST_BASE,
+])
+const selectPageError = createErrorSelector([
+  GET_APP_API_KEY_BASE,
+  GET_APP_RIGHTS_LIST_BASE,
+])
+
 @connect(function (state, props) {
   const { appId, apiKeyId } = props.match.params
-  const ids = { id: appId, keyId: apiKeyId }
-
-  const keysFetching = applicationKeysFetchingSelector(state, ids)
-  const rightsFetching = applicationRightsFetchingSelector(state, props)
-  const keysError = applicationKeysErrorSelector(state, ids)
-  const rightsError = applicationRightsErrorSelector(state, props)
-  const apiKey = applicationKeySelector(state, ids)
-  const rights = applicationRightsSelector(state, props)
 
   return {
-    keyId: apiKeyId,
+    apiKeyId,
     appId,
-    apiKey,
-    rights,
-    fetching: keysFetching || rightsFetching,
-    error: keysError || rightsError,
+    apiKey: selectApiKeyById(state, apiKeyId),
+    rights: selectApplicationRightsById(state, appId),
+    fetching: selectPageFetching(state),
+    error: selectPageError(state),
   }
-})
+},
+dispatch => ({
+  loadPageData (appId, apiKeyId) {
+    dispatch(getApplicationApiKey(appId, apiKeyId))
+    dispatch(getApplicationRights(appId))
+  },
+}))
 @withBreadcrumb('apps.single.api-keys.edit', function (props) {
-  const { appId, keyId } = props
+  const { appId, apiKeyId } = props
 
   return (
     <Breadcrumb
-      path={`/console/applications/${appId}/api-keys/${keyId}/edit`}
+      path={`/console/applications/${appId}/api-keys/${apiKeyId}/edit`}
       icon="general_settings"
       content={sharedMessages.edit}
     />
@@ -84,9 +100,9 @@ export default class ApplicationApiKeyEdit extends React.Component {
   }
 
   componentDidMount () {
-    const { dispatch, appId } = this.props
+    const { loadPageData, appId, apiKeyId } = this.props
 
-    dispatch(getApplicationApiKeyPageData(appId))
+    loadPageData(appId, apiKeyId)
   }
 
   onDeleteSuccess () {

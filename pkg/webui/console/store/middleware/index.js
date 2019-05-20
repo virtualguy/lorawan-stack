@@ -31,7 +31,7 @@ export default [
   ...application,
   ...devices,
   ...device,
-  ...gateways,
   ...gateway,
+  ...gateways,
   ...configuration,
 ]

@@ -13,42 +13,22 @@
 // limitations under the License.
 
 import {
-  createGetRightsListActionType,
-  createGetRightsListFailureActionType,
-  createGetRightsListSuccessActionType,
+  createGetRightsSuccessActionType,
 } from '../actions/rights'
 
-const defaultState = {
-  fetching: false,
-  rights: [],
-  error: false,
-}
+const defaultState = {}
 
 const createNamedRightsReducer = function (reducerName = '') {
-  const GET_LIST = createGetRightsListActionType(reducerName)
-  const GET_LIST_SUCCESS = createGetRightsListSuccessActionType(reducerName)
-  const GET_LIST_FAILURE = createGetRightsListFailureActionType(reducerName)
+  const GET_LIST_SUCCESS = createGetRightsSuccessActionType(reducerName)
 
   return function (state = defaultState, action) {
+
     switch (action.type) {
-    case GET_LIST:
-      return {
-        ...state,
-        fetching: true,
-      }
-    case GET_LIST_FAILURE:
-      return {
-        ...state,
-        fetching: false,
-        rights: [],
-        error: action.error,
-      }
     case GET_LIST_SUCCESS:
+      const { entityId, rights } = action
       return {
         ...state,
-        rights: action.rights,
-        fetching: false,
-        error: false,
+        [entityId]: rights,
       }
     default:
       return state

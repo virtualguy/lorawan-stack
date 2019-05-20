@@ -27,33 +27,35 @@ import GatewayOverview from '../gateway-overview'
 import GatewayApiKeys from '../gateway-api-keys'
 
 import {
-  getGateway,
-  startGatewayEventsStream,
+  selectSelectedGatewayId,
+  selectGatewayById,
+  selectGatewayFetching,
+  selectGatewayError,
+} from '../../store/selectors/gateways'
+import {
+  getGatewayById,
+} from '../../store/actions/gateways'
+import {
   stopGatewayEventsStream,
 } from '../../store/actions/gateway'
-import {
-  fetchingSelector,
-  errorSelector,
-  gatewaySelector,
-} from '../../store/selectors/gateway'
 
-@connect(function (state, props) {
-  const gtwId = props.match.params.gtwId
+@connect(function (state) {
+  const gtwId = selectSelectedGatewayId(state)
 
   return {
     gtwId,
-    gateway: gatewaySelector(state, props),
-    error: errorSelector(state, props),
-    fetching: fetchingSelector(state, props),
+    gateway: selectGatewayById(state, gtwId),
+    error: selectGatewayError(state),
+    fetching: selectGatewayFetching(state),
   }
 },
 dispatch => ({
-  getGateway: (id, meta) => dispatch(getGateway(id, meta)),
-  startStream: id => dispatch(startGatewayEventsStream(id)),
+  getGateway: (id, meta) => dispatch(getGatewayById(id, meta)),
   stopStream: id => dispatch(stopGatewayEventsStream(id)),
 }))
 @withSideNavigation(function (props) {
-  const { match, gtwId } = props
+  const { match } = props
+  const { gtwId } = match.params
   const matchedUrl = match.url
 
   return {
@@ -74,7 +76,7 @@ dispatch => ({
   }
 })
 @withBreadcrumb('gateways.single', function (props) {
-  const { gtwId } = props
+  const { gtwId } = props.match.params
 
   return (
     <Breadcrumb
@@ -87,10 +89,9 @@ dispatch => ({
 export default class Gateway extends React.Component {
 
   componentDidMount () {
-    const { getGateway, startStream, match } = this.props
+    const { getGateway, match } = this.props
     const { gtwId } = match.params
 
-    startStream(gtwId)
     getGateway(gtwId, {
       selectors: [
         'name',

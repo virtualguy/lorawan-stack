@@ -12,38 +12,59 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export const GET_API_KEYS_LIST = 'GET_API_KEYS_LIST'
-export const GET_API_KEYS_LIST_SUCCESS = 'GET_API_KEYS_LIST_SUCCESS'
-export const GET_API_KEYS_LIST_FAILURE = 'GET_API_KEYS_LIST_FAILURE'
+import {
+  getPagination,
+  createGetPaginationActionType,
+  getPaginationSuccess,
+  createGetPaginationSuccessActionType,
+  getPaginationFailure,
+  createGetPaginationFailureActionType,
+  createGetBaseActionType,
+} from './pagination'
 
-export const createGetApiKeysListActionType = name => (
-  `GET_${name}_API_KEYS_LIST`
+// utils
+export const createGetApiKeysSharedName = name => (
+  `${name}_API_KEYS`
 )
-
-export const createGetApiKeysListSuccessActionType = name => (
-  `GET_${name}_API_KEYS_LIST_SUCCESS`
+export const createGetApiKeysBaseActionType = name => (
+  createGetBaseActionType(createGetApiKeysSharedName(name))
 )
-
-export const createGetApiKeysListFailureActionType = name => (
-  `GET_${name}_API_KEYS_LIST_FAILURE`
-)
-
-export const createGetApiKeyActionType = name => (
+export const createGetApiKeyBaseActionType = name => (
   `GET_${name}_API_KEY`
 )
 
-export const getApiKeysList = name => (id, params) => (
-  { type: createGetApiKeysListActionType(name), id, params }
+// api keys
+export const createGetApiKeysActionType = name => (
+  `${createGetPaginationActionType(createGetApiKeysSharedName(name))}`
+)
+export const createGetApiKeysSuccessActionType = name => (
+  `${createGetPaginationSuccessActionType(createGetApiKeysSharedName(name))}`
+)
+export const createGetApiKeysFailureActionType = name => (
+  `${createGetPaginationFailureActionType(createGetApiKeysSharedName(name))}`
 )
 
-export const getApiKeysListSuccess = name => (id, keys, totalCount) => (
-  { type: createGetApiKeysListSuccessActionType(name), id, keys, totalCount }
+export const getApiKeys = name => getPagination(createGetApiKeysSharedName(name))
+export const getApiKeysSuccess = name => getPaginationSuccess(createGetApiKeysSharedName(name))
+export const getApiKeysFailure = name => getPaginationFailure(createGetApiKeysSharedName(name))
+
+// api key
+export const createGetApiKeyActionType = name => (
+  `${createGetApiKeyBaseActionType(name)}_REQUEST`
+)
+export const createGetApiKeySuccessActionType = name => (
+  `${createGetApiKeyBaseActionType(name)}_SUCCESS`
+)
+export const createGetApiKeyFailureActionType = name => (
+  `${createGetApiKeyBaseActionType(name)}_FAILURE`
 )
 
-export const getApiKeysListFailure = name => (id, error) => (
-  { type: createGetApiKeysListFailureActionType(name), id, error }
+export const getApiKey = name => (entityId, keyId) => (
+  { type: createGetApiKeyActionType(name), entityId, keyId }
 )
-
-export const getApiKey = name => id => (
-  { type: createGetApiKeyActionType(name), id }
+export const getApiKeySuccess = name => key => (
+  { type: createGetApiKeySuccessActionType(name), key }
+)
+export const getApiKeyFailure = name => error => (
+  { type: createGetApiKeyFailureActionType(name), error }
 )

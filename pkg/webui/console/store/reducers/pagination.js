@@ -37,4 +37,30 @@ const createNamedPaginationReducer = function (reducerName = '') {
   }
 }
 
-export default createNamedPaginationReducer
+const createNamedPaginationReducerById = function (reducerName = '') {
+  const GET_PAGINATION_SUCCESS = createGetPaginationSuccessActionType(reducerName)
+  const paginationReducer = createNamedPaginationReducer(reducerName)
+
+  return function (state = {}, action) {
+    const { entityId } = action
+
+    if (!entityId) {
+      return state
+    }
+
+    switch (action.type) {
+    case GET_PAGINATION_SUCCESS:
+      return {
+        ...state,
+        [entityId]: paginationReducer(state[entityId], action),
+      }
+    default:
+      return state
+    }
+  }
+}
+
+export {
+  createNamedPaginationReducer as default,
+  createNamedPaginationReducerById,
+}

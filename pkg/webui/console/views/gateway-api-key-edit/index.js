@@ -26,43 +26,55 @@ import Message from '../../../lib/components/message'
 import IntlHelmet from '../../../lib/components/intl-helmet'
 import { ApiKeyEditForm } from '../../../components/api-key-form'
 
-import { getGatewayApiKeyPageData } from '../../store/actions/gateway'
-import { getGatewayId } from '../../../lib/selectors/id'
 import {
-  gatewaySelector,
-  gatewayRightsSelector,
-  gatewayRightsErrorSelector,
-  gatewayRightsFetchingSelector,
-  gatewayKeySelector,
-  gatewayKeysErrorSelector,
-  gatewayKeysFetchingSelector,
-} from '../../store/selectors/gateway'
+  getGatewayApiKey,
+  getGatewayRights,
+  GET_GTW_API_KEY_BASE,
+  GET_GTW_RIGHTS_LIST_BASE,
+} from '../../store/actions/gateways'
+import {
+  selectGatewayRightsById,
+} from '../../store/selectors/gateways'
+import {
+  selectApiKeyById,
+} from '../../store/selectors/api-keys'
+import {
+  createFetchingSelector,
+} from '../../store/selectors/fetching'
+import {
+  createErrorSelector,
+} from '../../store/selectors/error'
 
 import api from '../../api'
 
+const selectPageFetching = createFetchingSelector([
+  GET_GTW_API_KEY_BASE,
+  GET_GTW_RIGHTS_LIST_BASE,
+])
+const selectPageError = createErrorSelector([
+  GET_GTW_API_KEY_BASE,
+  GET_GTW_RIGHTS_LIST_BASE,
+])
+
 @connect(function (state, props) {
-  const gateway = gatewaySelector(state, props)
-  const gtwId = getGatewayId(gateway)
-  const apiKeyId = props.match.params.apiKeyId
+  const { gtwId, apiKeyId } = props.match.params
 
-  const ids = { id: gtwId, keyId: apiKeyId }
-
-  const keysFetching = gatewayKeysFetchingSelector(state, ids)
-  const rightsFetching = gatewayRightsFetchingSelector(state, props)
-  const keysError = gatewayKeysErrorSelector(state, ids)
-  const apiKey = gatewayKeySelector(state, ids)
-  const rightsError = gatewayRightsErrorSelector(state, props)
-  const rights = gatewayRightsSelector(state, props)
 
   return {
-    keyId: apiKeyId,
+    apiKeyId,
     gtwId,
-    apiKey,
-    rights,
-    fetching: keysFetching || rightsFetching,
-    error: keysError || rightsError,
+    apiKey: selectApiKeyById(state, apiKeyId),
+    rights: selectGatewayRightsById(state, gtwId),
+    fetching: selectPageFetching(state),
+    error: selectPageError(state),
   }
-})
+},
+dispatch => ({
+  loadPageData (gtwId, apiKeyId) {
+    dispatch(getGatewayApiKey(gtwId, apiKeyId))
+    dispatch(getGatewayRights(gtwId))
+  },
+}))
 @withBreadcrumb('gtws.single.api-keys.edit', function (props) {
   const { gtwId, keyId } = props
 
@@ -89,9 +101,9 @@ export default class GatewayApiKeyEdit extends React.Component {
   }
 
   componentDidMount () {
-    const { dispatch, gtwId } = this.props
+    const { loadPageData, gtwId, apiKeyId } = this.props
 
-    dispatch(getGatewayApiKeyPageData(gtwId))
+    loadPageData(gtwId, apiKeyId)
   }
 
   onDeleteSuccess () {

@@ -37,11 +37,12 @@ const getGatewaysLogic = createLogic({
 const getGatewayLogic = createLogic({
   type: gateways.GET_GTW,
   async process ({ action }, dispatch, done) {
-    const { id, meta: { selectors = []}} = action
+    const { id, meta = { selectors: []}} = action
 
     try {
-      const gateway = await api.gateway.get(id, selectors)
-      dispatch(gateways.getGatewaySuccess(gateway))
+      const gtw = await api.gateway.get(id, meta.selectors)
+      dispatch(gateway.startGatewayEventsStream(id))
+      dispatch(gateways.getGatewaySuccess(gtw))
     } catch (error) {
       dispatch(gateways.getGatewayFailure(error))
     }
@@ -51,18 +52,52 @@ const getGatewayLogic = createLogic({
 })
 
 const getGatewaysRightsLogic = createLogic({
-  type: [
-    gateways.GET_GTWS_RIGHTS_LIST,
-    gateway.GET_GTW_API_KEY_PAGE_DATA,
-  ],
+  type: gateways.GET_GTW_RIGHTS_LIST,
   async process ({ action }, dispatch, done) {
-    const { id } = action
+    const { entityId } = action
     try {
-      const result = await api.rights.gateways(id)
+      const result = await api.rights.gateways(entityId)
 
-      dispatch(gateways.getGatewaysRightsListSuccess(result.rights.sort()))
+      dispatch(gateways.getGatewayRightsSuccess(result.rights.sort(), entityId))
     } catch (error) {
-      dispatch(gateways.getGatewaysRightsListFailure(error))
+      dispatch(gateways.getGatewayRightsFailure(error))
+    }
+
+    done()
+  },
+})
+
+const getGatewayApiKeysLogic = createLogic({
+  type: gateways.GET_GTW_API_KEYS,
+  async process ({ action }, dispatch, done) {
+    const { entityId, params } = action
+    try {
+      const res = await api.gateway.apiKeys.list(entityId, params)
+      dispatch(
+        gateways.getGatewayApiKeysSuccess(
+          res.api_keys.map(key => ({ ...key, entityId })),
+          res.totalCount,
+          entityId
+        )
+      )
+    } catch (error) {
+      dispatch(gateways.getGatewayApiKeysFailure(error))
+    }
+
+    done()
+  },
+})
+
+const getGatewayApiKeyLogic = createLogic({
+  type: gateways.GET_GTW_API_KEY,
+  async process ({ action }, dispatch, done) {
+    const { entityId, keyId } = action
+    try {
+      const res = await api.gateway.apiKeys.get(entityId, keyId)
+
+      dispatch(gateways.getGatewayApiKeySuccess({ ...res, entityId }))
+    } catch (error) {
+      dispatch(gateways.getGatewayApiKeyFailure(error))
     }
 
     done()
@@ -73,4 +108,6 @@ export default [
   getGatewaysLogic,
   getGatewayLogic,
   getGatewaysRightsLogic,
+  getGatewayApiKeysLogic,
+  getGatewayApiKeyLogic,
 ]

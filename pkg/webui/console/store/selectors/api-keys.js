@@ -12,42 +12,51 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const storeSelector = (state, props) => state[props.id] || {}
+import {
+  SHARED_NAME_SINGLE as APP_SHARED_NAME_SINGLE,
+} from '../actions/applications'
+import {
+  SHARED_NAME_SINGLE as GTW_SHARED_NAME_SINGLE,
+} from '../actions/gateways'
+import {
+  createGetApiKeysBaseActionType,
+} from '../actions/api-keys'
+import {
+  createPaginationIdsSelectorByEntityAndId,
+  createPaginationTotalCountSelectorByEntityAndId,
+} from './pagination'
+import { createFetchingSelector } from './fetching'
+import { createErrorSelector } from './error'
 
-export const apiKeysStoreSelector = entity => (state, props) => (
-  storeSelector(state.apiKeys[entity], props) || {}
-)
+const selectStore = state => state.apiKeys
 
-export const apiKeysSelector = entity => function (state, props) {
-  const store = storeSelector(state.apiKeys[entity], props)
+// api key
+export const selectApiKeyById = (state, keyId) => selectStore(state)[keyId]
 
-  return store.keys ? store.keys : []
-}
+// application api keys
+const APP_ENTITY = 'apiKeysByApplication'
+const GET_APP_API_KEYS_BASE = createGetApiKeysBaseActionType(APP_SHARED_NAME_SINGLE)
 
-export const apiKeySelector = function (entity) {
-  const keysSelector = apiKeysSelector(entity)
+const selectAppApiKeysIdsById = createPaginationIdsSelectorByEntityAndId(APP_ENTITY)
+const selectAppApiKeysTotalCountById = createPaginationTotalCountSelectorByEntityAndId(APP_ENTITY)
+const selectAppApiKeysFetching = createFetchingSelector(GET_APP_API_KEYS_BASE)
+const selectAppApiKeysError = createErrorSelector(GET_APP_API_KEYS_BASE)
 
-  return function (state, props) {
-    const keys = keysSelector(state, props)
+export const selectApplicationApiKeysById = (state, appId) => selectAppApiKeysIdsById(state, appId).map(id => selectApiKeyById(state, id))
+export const selectApplicationTotalCountById = (state, appId) => selectAppApiKeysTotalCountById(state, appId)
+export const selectApplicationApiKeysFetching = state => selectAppApiKeysFetching(state)
+export const selectApplicationApiKeysError = state => selectAppApiKeysError(state)
 
-    return keys.find(key => key.id === props.keyId)
-  }
-}
+// gateway api keys
+const GTW_ENTITY = 'apiKeysByGateway'
+const GET_GTW_API_KEYS_BASE = createGetApiKeysBaseActionType(GTW_SHARED_NAME_SINGLE)
 
-export const totalCountSelector = entity => function (state, props) {
-  const store = storeSelector(state.totalCount[entity], props)
+const selectGtwApiKeysIdsById = createPaginationIdsSelectorByEntityAndId(GTW_ENTITY)
+const selectGtwApiKeysTotalCountById = createPaginationTotalCountSelectorByEntityAndId(GTW_ENTITY)
+const selectGtwApiKeysFetching = createFetchingSelector(GET_GTW_API_KEYS_BASE)
+const selectGtwApiKeysError = createErrorSelector(GET_GTW_API_KEYS_BASE)
 
-  return store.totalCount
-}
-
-export const fetchingSelector = entity => function (state, props) {
-  const store = storeSelector(state.apiKeys[entity], props)
-
-  return store.fetching
-}
-
-export const errorSelector = entity => function (state, props) {
-  const store = storeSelector(state.apiKeys[entity], props)
-
-  return store.error
-}
+export const selectGatewayApiKeysById = (state, gtwId) => selectGtwApiKeysIdsById(state, gtwId).map(id => selectApiKeyById(state, id))
+export const selectGatewayTotalCountById = (state, gtwId) => selectGtwApiKeysTotalCountById(state, gtwId)
+export const selectGatewayApiKeysFetching = state => selectGtwApiKeysFetching(state)
+export const selectGatewayApiKeysError = state => selectGtwApiKeysError(state)

@@ -23,7 +23,6 @@ import PropTypes from '../../../lib/prop-types'
 import FetchTable from '../fetch-table'
 import DateTime from '../../../lib/components/date-time'
 
-import { getApplicationId } from '../../../lib/selectors/id'
 import {
   getDevices,
   searchDevices,
@@ -113,7 +112,6 @@ DevicesTable.defaultProps = {
 export default connect(function (state) {
   return {
     error: selectDevicesError(state),
-    appId: getApplicationId(state.application.application),
     totalCount: selectDevicesTotalCount(state),
   }
 })(DevicesTable)

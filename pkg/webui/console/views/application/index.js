@@ -31,6 +31,7 @@ import ApplicationCollaborators from '../application-collaborators'
 import ApplicationData from '../application-data'
 
 import {
+  selectSelectedApplicationId,
   selectApplicationById,
   selectApplicationFetching,
   selectApplicationError,
@@ -39,14 +40,13 @@ import {
   getApplicationById,
 } from '../../store/actions/applications'
 import {
-  startApplicationEventsStream,
   stopApplicationEventsStream,
 } from '../../store/actions/application'
 
 import Devices from '../devices'
 
-@connect(function (state, props) {
-  const { appId } = props.match.params
+@connect(function (state) {
+  const appId = selectSelectedApplicationId(state)
 
   return {
     appId,
@@ -56,15 +56,15 @@ import Devices from '../devices'
   }
 },
 dispatch => ({
-  startStream: id => dispatch(startApplicationEventsStream(id)),
   stopStream: id => dispatch(stopApplicationEventsStream(id)),
   getApplication: (id, meta) => dispatch(getApplicationById(id, meta)),
 }))
 @withSideNavigation(function (props) {
   const matchedUrl = props.match.url
+  const appId = props.match.params.appId
 
   return {
-    header: { title: props.appId, icon: 'application' },
+    header: { title: appId, icon: 'application' },
     entries: [
       {
         title: sharedMessages.overview,
@@ -118,7 +118,7 @@ dispatch => ({
   }
 })
 @withBreadcrumb('apps.single', function (props) {
-  const { appId } = props
+  const { appId } = props.match.params
   return (
     <Breadcrumb
       path={`/console/applications/${appId}`}
@@ -130,7 +130,8 @@ dispatch => ({
 export default class Application extends React.Component {
 
   componentDidMount () {
-    const { appId, startStream, getApplication } = this.props
+    const { match, getApplication } = this.props
+    const { appId } = match.params
 
     getApplication(appId, {
       selectors: [
@@ -140,7 +141,6 @@ export default class Application extends React.Component {
         'updated_at',
       ],
     })
-    startStream(appId)
   }
 
   componentWillUnmount () {

@@ -32,6 +32,11 @@ import diff from '../../../lib/diff'
 import toast from '../../../components/toast'
 import SubmitBar from '../../../components/submit-bar'
 
+import {
+  selectSelectedApplicationId,
+  selectApplicationById,
+} from '../../store/selectors/applications'
+
 import api from '../../api'
 
 const m = defineMessages({
@@ -51,9 +56,11 @@ const validationSchema = Yup.object().shape({
 })
 
 
-@connect(function ({ application }) {
+@connect(function (state) {
+  const appId = selectSelectedApplicationId(state)
+
   return {
-    application: application.application,
+    application: selectApplicationById(state, appId),
   }
 })
 @withBreadcrumb('apps.single.general-settings', function (props) {

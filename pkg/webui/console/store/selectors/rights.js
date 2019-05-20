@@ -14,20 +14,8 @@
 
 const storeSelector = (state, entity) => state.rights[entity]
 
-export const rightsSelector = entity => function (state) {
+export const createRightsSelectorById = entity => function (state, entityId) {
   const store = storeSelector(state, entity)
 
-  return store.rights
-}
-
-export const fetchingSelector = entity => function (state) {
-  const store = storeSelector(state, entity)
-
-  return store.fetching
-}
-
-export const errorSelector = entity => function (state) {
-  const store = storeSelector(state, entity)
-
-  return store.error
+  return store[entityId] || []
 }
