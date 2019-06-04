@@ -13,51 +13,119 @@
 // limitations under the License.
 
 import React from 'react'
-import PropTypes from 'prop-types'
 import bind from 'autobind-decorator'
 import classnames from 'classnames'
+
+import Message from '../../lib/components/message'
+import PropTypes from '../../lib/prop-types'
+import { RadioGroupContext } from './group'
 
 import style from './radio-button.styl'
 
 @bind
 class RadioButton extends React.PureComponent {
 
-  onChange (evt) {
-    this.props.onChange(evt.target.value)
+  static contextType = RadioGroupContext
+
+  constructor (props) {
+    super(props)
+
+    this.input = React.createRef()
+  }
+
+  handleChange (event) {
+    const { onChange } = this.props
+
+    if (this.context) {
+      const { onChange: groupOnChange } = this.context
+      groupOnChange(event)
+    }
+
+    onChange(event)
+  }
+
+  focus () {
+    if (this.input && this.input.current) {
+      this.input.current.focus()
+    }
+  }
+
+  blur () {
+    if (this.input && this.input.current) {
+      this.input.current.blur()
+    }
   }
 
   render () {
-    const { onChange, ...rest } = this.props
+    const {
+      name,
+      title,
+      disabled,
+      readOnly,
+      autoFocus,
+      onBlur,
+      onFocus,
+      value,
+      checked,
+    } = this.props
 
-    const classNames = classnames(style.container, {
-      [style.disabled]: rest.disabled,
+    const radioProps = {}
+    if (this.context) {
+      radioProps.name = this.context.name
+      radioProps.disabled = disabled || this.context.disabled
+      radioProps.checked = value === this.context.value
+    } else {
+      radioProps.name = name
+      radioProps.disabled = disabled
+      radioProps.checked = checked
+    }
+
+    const cls = classnames(style.wrapper, {
+      [style.disabled]: radioProps.disabled,
     })
 
     return (
-      <label className={classNames}>
-        <input
-          className={style.input}
-          type="radio"
-          onChange={this.onChange}
-          {...rest}
-        />
-        <span className={style.dot} />
+      <label className={cls}>
+        <span className={style.radio}>
+          <input
+            type="radio"
+            ref={this.input}
+            readOnly={readOnly}
+            autoFocus={autoFocus}
+            onBlur={onBlur}
+            onFocus={onFocus}
+            onChange={this.handleChange}
+            value={value}
+            {...radioProps}
+          />
+          <span className={style.dot} />
+        </span>
+        {title && <Message className={style.label} content={title} />}
       </label>
     )
   }
 }
 
 RadioButton.propTypes = {
-  value: PropTypes.string,
+  title: PropTypes.message,
   name: PropTypes.string,
-  onFocus: PropTypes.func,
-  onBlur: PropTypes.func,
-  onChange: PropTypes.func,
+  value: PropTypes.string,
+  checked: PropTypes.bool,
   disabled: PropTypes.bool,
+  readOnly: PropTypes.bool,
+  autoFocus: PropTypes.bool,
+  onChange: PropTypes.func,
+  onBlur: PropTypes.func,
+  onFocus: PropTypes.func,
 }
 
 RadioButton.defaultProps = {
+  disabled: false,
+  readOnly: false,
+  autoFocus: false,
   onChange: () => null,
+  onBlur: () => null,
+  onFocus: () => null,
 }
 
 export default RadioButton
