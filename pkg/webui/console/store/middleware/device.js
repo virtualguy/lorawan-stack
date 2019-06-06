@@ -17,9 +17,10 @@ import { createLogic } from 'redux-logic'
 import api from '../../api'
 import * as device from '../actions/device'
 import createEventsConnectLogics from './events'
+import createRequestLogic from './lib'
 
 const getDeviceLogic = createLogic({
-  type: [ device.GET_DEV ],
+  type: device.GET_DEV,
   async process ({ getState, action }, dispatch, done) {
     const { appId, deviceId, selector, options } = action
     try {
@@ -34,7 +35,16 @@ const getDeviceLogic = createLogic({
   },
 })
 
+const updateDeviceLogic = createRequestLogic({
+  type: device.UPDATE_DEV,
+  async process ({ action }) {
+    const { appId, deviceId, patch } = action
+    return api.device.update(appId, deviceId, patch)
+  },
+}, device.updateDeviceSuccess)
+
 export default [
   getDeviceLogic,
+  updateDeviceLogic,
   ...createEventsConnectLogics(device.SHARED_NAME, 'device'),
 ]
