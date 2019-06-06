@@ -27,10 +27,12 @@ import {
 
 export const SHARED_NAME = 'DEVICE'
 
-export const GET_DEV = 'GET_DEVICE'
-export const UPDATE_DEV = 'UPDATE_DEVICE'
+export const GET_DEV = 'GET_DEVICE_REQUEST'
+export const UPDATE_DEV = 'UPDATE_DEVICE_REQUEST'
 export const GET_DEV_SUCCESS = 'GET_DEVICE_SUCCESS'
 export const GET_DEV_FAILURE = 'GET_DEVICE_FAILURE'
+export const UPDATE_DEV_SUCCESS = 'UPDATE_DEVICE_SUCCESS'
+export const UPDATE_DEV_FAILURE = 'UPDATE_DEVICE_FAILURE'
 export const START_DEVICE_EVENT_STREAM = createStartEventsStreamActionType(SHARED_NAME)
 export const START_DEVICE_EVENT_STREAM_SUCCESS = createStartEventsStreamSuccessActionType(SHARED_NAME)
 export const START_DEVICE_EVENT_STREAM_FAILURE = createStartEventsStreamFailureActionType(SHARED_NAME)
@@ -51,6 +53,14 @@ export const getDeviceSuccess = device => (
 
 export const getDeviceFailure = error => (
   { type: GET_DEV_FAILURE, error }
+)
+
+export const updateDeviceSuccess = device => (
+  { type: UPDATE_DEV_SUCCESS, device }
+)
+
+export const updateDeviceFailure = error => (
+  { type: UPDATE_DEV_FAILURE, error }
 )
 
 export const startDeviceEventsStream = startEventsStream(SHARED_NAME)
