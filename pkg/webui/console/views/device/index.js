@@ -30,6 +30,7 @@ import DeviceOverview from '../device-overview'
 import DeviceData from '../device-data'
 import DeviceGeneralSettings from '../device-general-settings'
 import DeviceLocation from '../device-location'
+import DevicePayloadFormatters from '../device-payload-formatters'
 
 import {
   getDevice,
@@ -89,6 +90,7 @@ export default class Device extends React.Component {
         'lorawan_version',
         'lorawan_phy_version',
         'locations',
+        'formatters',
       ],
       { ignoreNotFound: true })
   }
@@ -101,8 +103,14 @@ export default class Device extends React.Component {
 
 
   render () {
-    const { fetching, error, match, devId, deviceName } = this.props
-    const { appId } = match.params
+    const {
+      fetching,
+      error,
+      location: { pathname },
+      match: { params: { appId }},
+      devId,
+      deviceName,
+    } = this.props
 
     if (fetching) {
       return (
@@ -119,11 +127,16 @@ export default class Device extends React.Component {
 
     const basePath = `/console/applications/${appId}/devices/${devId}`
 
+    // Prevent default redirect to uplink when tab is already open
+    const payloadFormattersLink =
+    pathname.startsWith(`${basePath}/payload-formatters`)
+      ? pathname : `${basePath}/payload-formatters`
+
     const tabs = [
       { title: sharedMessages.overview, name: 'overview', link: basePath },
       { title: sharedMessages.data, name: 'data', link: `${basePath}/data` },
       { title: sharedMessages.location, name: 'location', link: `${basePath}/location` },
-      { title: sharedMessages.payloadFormatters, name: 'develop' },
+      { title: sharedMessages.payloadFormatters, name: 'develop', link: payloadFormattersLink, exact: false },
       { title: sharedMessages.generalSettings, name: 'general-settings', link: `${basePath}/general-settings` },
     ]
 
@@ -140,6 +153,7 @@ export default class Device extends React.Component {
                 narrow
                 tabs={tabs}
                 className={style.tabs}
+                divider
               />
             </Col>
           </Row>
@@ -149,6 +163,7 @@ export default class Device extends React.Component {
           <Route exact path={`${basePath}/data`} component={DeviceData} />
           <Route exact path={`${basePath}/location`} component={DeviceLocation} />
           <Route exact path={`${basePath}/general-settings`} component={DeviceGeneralSettings} />
+          <Route path={`${basePath}/payload-formatters`} component={DevicePayloadFormatters} />
         </Switch>
       </React.Fragment>
     )
