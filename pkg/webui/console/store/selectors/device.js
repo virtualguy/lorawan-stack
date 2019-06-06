@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { getDeviceId } from '../../../lib/selectors/id'
+
 import {
   eventsSelector,
   errorSelector as eventsErrorSelector,
@@ -23,6 +25,12 @@ const ENTITY = 'devices'
 const storeSelector = store => store.device
 
 export const deviceSelector = state => storeSelector(state).device
+
+export const selectSelectedDevice = state => deviceSelector(state)
+
+export const selectSelectedDeviceId = state => getDeviceId(selectSelectedDevice(state))
+
+export const selectSelectedDeviceFormatters = state => selectSelectedDevice(state).formatters
 
 export const fetchingSelector = function (state) {
   const store = storeSelector(state)
