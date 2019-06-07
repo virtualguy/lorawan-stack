@@ -20,13 +20,21 @@ import PropTypes from '../../lib/prop-types'
 import style from './breadcrumbs.styl'
 
 const Breadcrumbs = ({ className, breadcrumbs }) => (
-
+  
   <nav className={classnames(className, style.breadcrumbs)}>
     {breadcrumbs.map(function (component, index) {
-      return (
-        React.cloneElement(component, { key: index })
-      )
-    })}
+      if (index === breadcrumbs.length - 1) {
+        return (
+          React.cloneElement(component, { key: index, isLast: true})
+        )
+      }
+      else {
+        return (
+          React.cloneElement(component, { key: index })
+        )
+      }
+    })
+    }
   </nav>
 )
 
